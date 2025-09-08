@@ -1,4 +1,13 @@
 FROM ubuntu/squid
+
+# https://community.letsencrypt.org/t/lets-encrypt-certificate-for-client-to-squid-proxy-encryption/206978/12
+RUN set -eux; \
+	apt-get update; \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+		squid-openssl; \
+    rm -rf /var/lib/apt/lists/*; \
+	/usr/sbin/squid --version
+
 RUN apt update && apt install -y squid-common ssl-cert ca-certificates curl gnupg
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
