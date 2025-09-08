@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="OPEN_SSH" host="spy-duck-ext.xyz" id="96666539-8e02-4123-8649-95579e18f963" port="64100" customName="Proxy server" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="Proxy server" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

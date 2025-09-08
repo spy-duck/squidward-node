@@ -1,0 +1,15 @@
+services:
+  proxy:
+    container_name: spy-duck-proxy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 3128:3128
+      - 3129:3129
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf
+      - ./auth.js:/etc/squid/auth.js
+      - /etc/letsencrypt/live/nl.spy-duck-ext.xyz/fullchain.pem:/etc/squid/certs/fullchain.pem
+      - /etc/letsencrypt/live/nl.spy-duck-ext.xyz/privkey.pem:/etc/squid/certs/privkey.pem

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b9601ff1-c2c7-42a8-948c-8bfada9f23db" name="Proxy server">
+        <fileTransfer accessType="SFTP" host="spy-duck-ext.xyz" port="64100" sshConfigId="96666539-8e02-4123-8649-95579e18f963" sshConfig="Proxy server" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
