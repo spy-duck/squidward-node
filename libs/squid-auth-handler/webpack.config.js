@@ -1,5 +1,4 @@
 module.exports = function(options) {
-    console.log(options);
     return {
         ...options,
         target: 'node16',

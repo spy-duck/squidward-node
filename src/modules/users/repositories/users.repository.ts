@@ -51,4 +51,24 @@ export class UsersRepository {
             `user:${username}`,
         );
     }
+    
+    async getByUsername(username: string): Promise<UserEntity | null> {
+        const exist = await this.redisService.client.exists(
+            `user:${ username }`,
+        );
+        
+        if (!exist) {
+            return null;
+        }
+        
+        const user = await this.redisService.client.hGetAll(
+            `user:${ username }`,
+        );
+        
+        return new UserEntity(
+            user.id,
+            username,
+            user.password,
+        );
+    }
 }

@@ -49,7 +49,7 @@ services:
     networks:
       squid-node-network:
       external: # DEV
-    command: /bin/sh -c "redis-server --requirepass $(cat $$REDIS_PASSWORD_FILE)"
+    command: /bin/sh -c "redis-server --requirepass $$(cat $$REDIS_PASSWORD_FILE)"
 
     secrets:
       - redis_password

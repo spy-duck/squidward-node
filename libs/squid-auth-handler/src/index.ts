@@ -1,6 +1,4 @@
-import fs from 'node:fs';
 import readline from 'node:readline';
-const LOG_FILE = '/var/log/squid/auth.log';
 
 export async function initSquidAuthHandler() {
     try {
@@ -10,45 +8,29 @@ export async function initSquidAuthHandler() {
             terminal: false
         });
         
-        const users = {
-            user3: 'qweqwe',
-        }
-        
         async function main(username, password) {
-            fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tStart auth: ${username} ${password}\n`, {
-                encoding: "utf8",
-                flag: "a+",
+            const response = await fetch('http://localhost:9090/auth/authentication', {
+                method: 'POST',
+                headers: {
+                    'User-Agent': 'squid-connector',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                }),
             });
-            
-            if (!users[username] || users[username] !== password) {
-                // fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tERR incorrect username or password: ${username} ${password}\n`, {
-                //     encoding: "utf8",
-                //     flag: "a+",
-                // });
-                console.log(`ERR`);
-                process.exit(0);
-            }
-            // fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tOK ${username} ${password}\n`, {
-            //     encoding: "utf8",
-            //     flag: "a+",
-            // });
-            console.log(`OK`);
+            const data = await response.json();
+            console.log(data?.response?.success ? `OK` : `ERR`);
             process.exit(0);
         }
         
         rl.on('line', async (line) => {
-            fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tline: ${line}\n`, {
-                encoding: "utf8",
-                flag: "a+",
-            });
             const [username, password] = line.split(' ');
             await main(username, password);
         });
     } catch (error) {
-        fs.writeFileSync(LOG_FILE, `${new Date()}\t[ERR]\t${error}`, {
-            encoding: "utf8",
-            flag: "a+",
-        });
         console.log(`ERR`);
+        // TODO: log and report error
     }
 }

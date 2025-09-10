@@ -10,6 +10,8 @@ import { utilities as winstonModuleUtilities, WinstonModule } from 'nest-winston
 import { AppModule } from '@/app.module';
 import { isDevelopment } from '@/common/utils/is-development';
 import { INTERNAL_SERVER_PORT } from '@/contracts/constants';
+import { InternalRequest } from '@/common/types/internal-request.type';
+import { InternalServerMiddleware } from '@/common/middleware/internal-server.middleware';
 
 const logger = createLogger({
     transports: [ new winston.transports.Console() ],
@@ -55,14 +57,7 @@ async function bootstrap() {
     
     const internalApp = express();
     internalApp.use(json({ limit: '1000mb' }));
-    
-    internalApp.use(
-        (req, res, next) => {
-            req.url = req.originalUrl;
-            
-            httpServer.handle(req, res, next);
-        },
-    );
+    internalApp.use(InternalServerMiddleware(httpServer));
     
     const internalServer = internalApp.listen(INTERNAL_SERVER_PORT, '127.0.0.1');
     
@@ -71,7 +66,6 @@ async function bootstrap() {
     const closeInternalServer = () => {
         if (internalServerClosed) return;
         internalServerClosed = true;
-        
         internalServer.close(() => {
             logger.info('Shutting down...');
         });
@@ -84,7 +78,7 @@ async function bootstrap() {
     
     logger.info(`
 ====================================================
-= Internal server started on http://127.0.0.1:${INTERNAL_SERVER_PORT} =
+= Internal server started on http://127.0.0.1:${ INTERNAL_SERVER_PORT } =
 ====================================================
     `);
 }
