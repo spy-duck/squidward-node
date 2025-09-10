@@ -96,6 +96,7 @@ export class SquidService implements OnApplicationBootstrap{
             }
             
             await this.stopSquid(data);
+            
             await this.startSquid(data);
             
             this.isSquidRunning = true;

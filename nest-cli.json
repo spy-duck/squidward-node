@@ -10,13 +10,15 @@
     "tsConfigPath": "tsconfig.build.json"
   },
   "projects": {
-    "auth-connector": {
+    "squid-auth-handler": {
       "type": "library",
-      "root": "libs/auth-connector",
+      "root": "libs/squid-auth-handler",
       "entryFile": "index",
-      "sourceRoot": "libs/auth-connector/src",
+      "sourceRoot": "libs/squid-auth-handler/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/auth-connector/tsconfig.lib.json"
+        "tsConfigPath": "libs/squid-auth-handler/tsconfig.lib.json",
+        "webpack": true,
+        "webpackConfigPath": "libs/squid-auth-handler/webpack.config.js"
       }
     }
   }

@@ -3,6 +3,9 @@ import * as CONTROLLERS from './controllers';
 export const ROOT = '/node' as const;
 
 export const REST_API = {
+    AUTH: {
+        POST: `${ROOT}/${CONTROLLERS.AUTH_CONTROLLER}/${CONTROLLERS.AUTH_CONTROLLER.AUTH}`,
+    },
     USERS: {
         POST: `${ROOT}/${CONTROLLERS.USERS_CONTROLLER}/${CONTROLLERS.USERS_ROUTES.POST}`,
         ADD: `${ROOT}/${CONTROLLERS.USERS_CONTROLLER}/${CONTROLLERS.USERS_ROUTES.ADD}`,

@@ -78,7 +78,7 @@ RUN node -v
 
 # setup acme.sh
 RUN mkdir -p /etc/squid/certs
-COPY ./bash/cert-renew-hook.sh /etc/squid/certs
+COPY shell/cert-renew-hook.sh /etc/squid/certs
 
 RUN apt install -y apache2-utils supervisor
 
@@ -89,15 +89,15 @@ RUN rm -rf /var/lib/apt/lists/*
 
 COPY ./supervisord.conf .
 
-COPY ./bash/start-squid.sh /etc/squid/start-squid.sh
+COPY shell/start-squid.sh /etc/squid/start-squid.sh
 RUN chmod +x /etc/squid/start-squid.sh
 
-COPY ./auth.js /etc/squid/auth.js
-RUN chmod +x /etc/squid/auth.js
-RUN chown squid:squid /etc/squid/auth.js
-RUN chmod 700 /etc/squid/auth.js
+COPY shell/squid-auth-connector.js /etc/squid/squid-auth-connector.js
+RUN chmod +x /etc/squid/squid-auth-connector.js
+RUN chown squid:squid /etc/squid/squid-auth-connector.js
+RUN chmod 700 /etc/squid/squid-auth-connector.js
 
-COPY ./bash/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY shell/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD tail -f /dev/null

@@ -22,7 +22,7 @@ export class SquidController {
         };
     }
     
-    @Post(SQUID_ROUTES.RESTART)
+    @Post(SQUID_ROUTES.STOP)
     public async stopSquid(@Body() body: StopSquidRequestDto): Promise<StopSquidResponseDto> {
         const response = await this.squidService.stopSquid(body);
         const data = errorHandler(response);
@@ -31,7 +31,7 @@ export class SquidController {
         };
     }
     
-    @Post(SQUID_ROUTES.STOP)
+    @Post(SQUID_ROUTES.RESTART)
     public async restartSquid(@Body() body: RestartSquidRequestDto): Promise<RestartSquidResponseDto> {
         const response = await this.squidService.restartSquid(body);
         const data = errorHandler(response);

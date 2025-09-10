@@ -29,7 +29,7 @@ services:
       - ./.data/certs:/etc/squid/certs
       - ./.data/.acme.sh:/root/.acme.sh
       - ./squid.dev.conf:/etc/squid/squid.conf
-      - ./bash/docker-entrypoint.sh:/usr/local/bin/entrypoint.sh
+      - ./shell/docker-entrypoint.sh:/usr/local/bin/entrypoint.sh
     command:
       - npm start:dev
 
