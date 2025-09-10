@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "root": "src",
+  "entryFile": "main",
+  "monorepo": true,
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "tsconfig.build.json"
+  },
+  "projects": {
+    "auth-connector": {
+      "type": "library",
+      "root": "libs/auth-connector",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth-connector/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth-connector/tsconfig.lib.json"
+      }
+    }
+  }
+}

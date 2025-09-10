@@ -5,23 +5,23 @@ const LOG_FILE = '/var/log/squid/auth.log';
 
 
 try {
-
+    
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
         terminal: false
     });
-
+    
     const users = {
         user3: 'qweqwe',
     }
-
+    
     async function main(username, password) {
         fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tStart auth: ${username} ${password}\n`, {
             encoding: "utf8",
             flag: "a+",
         });
-
+        
         if (!users[username] || users[username] !== password) {
             // fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tERR incorrect username or password: ${username} ${password}\n`, {
             //     encoding: "utf8",
@@ -37,7 +37,7 @@ try {
         console.log(`OK`);
         process.exit(0);
     }
-
+    
     rl.on('line', async (line) => {
         fs.writeFileSync(LOG_FILE, `${new Date()}\t[LOG]\tline: ${line}\n`, {
             encoding: "utf8",
@@ -47,6 +47,9 @@ try {
         await main(username, password);
     });
 } catch (error) {
-    fs.writeFileSync(LOG_FILE, `${new Date()}\t[ERR]\t${error}`, { append: true });
+    fs.writeFileSync(LOG_FILE, `${new Date()}\t[ERR]\t${error}`, {
+        encoding: "utf8",
+        flag: "a+",
+    });
     console.log(`ERR`);
 }

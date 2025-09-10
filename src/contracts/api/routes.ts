@@ -1,0 +1,11 @@
+import * as CONTROLLERS from './controllers';
+
+export const ROOT = '/node' as const;
+
+export const REST_API = {
+    USERS: {
+        POST: `${ROOT}/${CONTROLLERS.USERS_CONTROLLER}/${CONTROLLERS.USERS_ROUTES.POST}`,
+        ADD: `${ROOT}/${CONTROLLERS.USERS_CONTROLLER}/${CONTROLLERS.USERS_ROUTES.ADD}`,
+        REMOVE: `${ROOT}/${CONTROLLERS.USERS_CONTROLLER}/${CONTROLLERS.USERS_ROUTES.REMOVE}`,
+    }
+}

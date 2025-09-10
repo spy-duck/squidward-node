@@ -1,0 +1,66 @@
+services:
+  proxy:
+    container_name: squid-net-node
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+      args:
+        - SQUID_VERSION=$SQUID_VERSION
+        - LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
+        - DOMAIN=$DOMAIN
+        - APP_PORT=$APP_PORT
+        - CONTAINER_TZ=$TZ
+    networks:
+      squid-node-network:
+      external:
+    ports:
+      - "$SUID_HTTP_PORT:$SUID_HTTP_PORT"
+      - "$SUID_HTTPS_PORT:$SUID_HTTPS_PORT"
+      - "$APP_PORT:$APP_PORT"
+    env_file:
+      - .env
+    mem_limit: 2048m
+    ulimits:
+      nproc: 1073741816
+      nofile: 1048576
+    volumes:
+      - ./:/app
+      - ./.data/certs:/etc/squid/certs
+      - ./.data/.acme.sh:/root/.acme.sh
+      - ./squid.dev.conf:/etc/squid/squid.conf
+      - ./bash/docker-entrypoint.sh:/usr/local/bin/entrypoint.sh
+    command:
+      - npm start:dev
+
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - ./.data/redis:/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
+    expose:
+      - 6379
+    ports: # DEV
+      - "6380:6379"
+    networks:
+      squid-node-network:
+      external: # DEV
+    command: /bin/sh -c "redis-server --requirepass $(cat $$REDIS_PASSWORD_FILE)"
+
+    secrets:
+      - redis_password
+
+secrets:
+  redis_password:
+    environment: REDIS_PASSWORD
+
+networks:
+  squid-node-network:
+    name: squid_node_network
+    internal: true
+  external:
+    driver: bridge
