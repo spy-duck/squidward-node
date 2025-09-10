@@ -80,16 +80,24 @@ RUN node -v
 RUN mkdir -p /etc/squid/certs
 COPY ./bash/cert-renew-hook.sh /etc/squid/certs
 
-RUN apt install -y apache2-utils
+RUN apt install -y apache2-utils supervisor
 
 # cleanup
 RUN rm -rf /tmp/squid
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY ./bash/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY ./auth.js /etc/squid/auth.js
+COPY ./supervisord.conf .
 
+COPY ./bash/start-squid.sh /etc/squid/start-squid.sh
+RUN chmod +x /etc/squid/start-squid.sh
+
+COPY ./auth.js /etc/squid/auth.js
+RUN chmod +x /etc/squid/auth.js
+RUN chown squid:squid /etc/squid/auth.js
+RUN chmod 700 /etc/squid/auth.js
+
+COPY ./bash/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD tail -f /dev/null

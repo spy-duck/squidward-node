@@ -2,10 +2,12 @@ import { Logger, Module, OnApplicationShutdown } from '@nestjs/common';
 
 import { UsersModule } from './users/users.module';
 import { RedisService } from '@/common/libs/redis/redis.service';
+import { SquidModule } from '@/modules/squid/squid.module';
 
 @Module({
     imports: [
         UsersModule,
+        SquidModule,
     ],
     providers: [],
 })

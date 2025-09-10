@@ -5969,6 +5969,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-supervisord@npm:^1.0.6-rc.2":
+  version: 1.0.6-rc.2
+  resolution: "node-supervisord@npm:1.0.6-rc.2"
+  dependencies:
+    url: "npm:^0.11.3"
+    xmlrpc: "npm:^1.3.2"
+  checksum: 10c0/1e5371e14c18272c57c7839f033e66bee0b3e042593333251cdb2bb2ab1d6bf9d6d7834e176ff949a7a98e024c746207997e392c16a500e1a3c280d696474e33
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^8.0.0":
   version: 8.1.0
   resolution: "nopt@npm:8.1.0"
@@ -6385,6 +6395,7 @@ __metadata:
     morgan: "npm:^1.10.1"
     nest-winston: "npm:^1.10.2"
     nestjs-zod: "npm:^5.0.1"
+    node-supervisord: "npm:^1.0.6-rc.2"
     prettier: "npm:^3.4.2"
     redis: "npm:^5.8.2"
     reflect-metadata: "npm:^0.2.2"
@@ -6403,6 +6414,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"punycode@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "punycode@npm:1.4.1"
+  checksum: 10c0/354b743320518aef36f77013be6e15da4db24c2b4f62c5f1eb0529a6ed02fbaf1cb52925785f6ab85a962f2b590d9cd5ad730b70da72b5f180e2556b8bd3ca08
+  languageName: node
+  linkType: hard
+
 "punycode@npm:^2.1.0":
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
@@ -6417,7 +6435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.11.2, qs@npm:^6.14.0":
+"qs@npm:^6.11.2, qs@npm:^6.12.3, qs@npm:^6.14.0":
   version: 6.14.0
   resolution: "qs@npm:6.14.0"
   dependencies:
@@ -6651,6 +6669,13 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10c0/7e3c8b2e88a1841c9671094bbaeebd94448111dd90a81a1f606f3f67708a6ec57763b3b47f06da09fc6054193e0e6709e77325415dc8422b04497a8070fa02d4
+  languageName: node
+  linkType: hard
+
+"sax@npm:1.2.x":
+  version: 1.2.4
+  resolution: "sax@npm:1.2.4"
+  checksum: 10c0/6e9b05ff443ee5e5096ce92d31c0740a20d33002fad714ebcb8fc7a664d9ee159103ebe8f7aef0a1f7c5ecacdd01f177f510dff95611c589399baf76437d3fe3
   languageName: node
   linkType: hard
 
@@ -7657,6 +7682,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"url@npm:^0.11.3":
+  version: 0.11.4
+  resolution: "url@npm:0.11.4"
+  dependencies:
+    punycode: "npm:^1.4.1"
+    qs: "npm:^6.12.3"
+  checksum: 10c0/cc93405ae4a9b97a2aa60ca67f1cb1481c0221cb4725a7341d149be5e2f9cfda26fd432d64dbbec693d16593b68b8a46aad8e5eab21f814932134c9d8620c662
+  languageName: node
+  linkType: hard
+
 "util-deprecate@npm:^1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -7882,6 +7917,23 @@ __metadata:
     imurmurhash: "npm:^0.1.4"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/e8c850a8e3e74eeadadb8ad23c9d9d63e4e792bd10f4836ed74189ef6e996763959f1249c5650e232f3c77c11169d239cbfc8342fc70f3fe401407d23810505d
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:8.2.x":
+  version: 8.2.2
+  resolution: "xmlbuilder@npm:8.2.2"
+  checksum: 10c0/5806a607e8c02fe6055a6b0c013e99489d74945019a8d4fdadcb9e92ffb0342987ed9f04fa46579762ad825044417e5ff019081c9d7ec058384e65b502aa7fb2
+  languageName: node
+  linkType: hard
+
+"xmlrpc@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "xmlrpc@npm:1.3.2"
+  dependencies:
+    sax: "npm:1.2.x"
+    xmlbuilder: "npm:8.2.x"
+  checksum: 10c0/3c0882cd76196eb6555285710e07b743d1ae6fafbee857675c3edd612a3624cc96d7c163e2b9c20bb3c777ddeef636d2b8feb48889621bcc7d4f41d5d1be5697
   languageName: node
   linkType: hard
 
