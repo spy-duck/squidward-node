@@ -2,10 +2,10 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="b9601ff1-c2c7-42a8-948c-8bfada9f23db" name="Proxy server">
-        <fileTransfer accessType="SFTP" host="spy-duck-ext.xyz" port="64100" sshConfigId="96666539-8e02-4123-8649-95579e18f963" sshConfig="Proxy server" authAgent="true">
+      <webServer id="97928d69-3c44-4384-8732-279d52d585fb" name="Proxy server">
+        <fileTransfer accessType="SFTP" host="spy-duck-ext.xyz" port="64100" sshConfigId="47e14dcc-00b6-47ae-991b-2a6098560736" sshConfig="Proxy server" authAgent="true">
           <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
         </fileTransfer>
       </webServer>

@@ -5,34 +5,34 @@ import { RedisModule } from '@/common/libs/redis/redis.module';
 import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module';
 
 @Module({
-  imports: [
-      ConfigModule.forRoot({
-          envFilePath: '.env',
-          isGlobal: true,
-      }),
-      SupervisordModule.registerAsync({
-          imports: [],
-          inject: [],
-          useFactory: () => ({
-              host: 'localhost',
-              port: 61002,
-              user: 'squidnet',
-              password: 'UlJQmtqQ0NBVGVnQXdJQkFnSUhBWF',
-          }),
-      }),
-      RedisModule.registerAsync({
-          imports: [ ConfigModule ],
-          inject: [ ConfigService ],
-          useFactory: (config: ConfigService) => ({
-              database: 10,
-              host: 'redis',
-              port: 6379,
-              password: config.get('REDIS_PASSWORD'),
-          }),
-      }),
-      SquidNodeModule,
-  ],
-  controllers: [],
-  providers: [],
+    imports: [
+        ConfigModule.forRoot({
+            envFilePath: '.env',
+            isGlobal: true,
+        }),
+        SupervisordModule.registerAsync({
+            imports: [],
+            inject: [],
+            useFactory: () => ({
+                host: 'localhost',
+                port: 61002,
+                user: 'squidward',
+                password: 'UlJQmtqQ0NBVGVnQXdJQkFnSUhBWF',
+            }),
+        }),
+        RedisModule.registerAsync({
+            imports: [ ConfigModule ],
+            inject: [ ConfigService ],
+            useFactory: (config: ConfigService) => ({
+                database: 10,
+                host: 'redis',
+                port: 6379,
+                password: config.get('REDIS_PASSWORD'),
+            }),
+        }),
+        SquidNodeModule,
+    ],
+    controllers: [],
+    providers: [],
 })
 export class AppModule {}

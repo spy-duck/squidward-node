@@ -1,5 +1,5 @@
 services:
-  proxy:
+  squidward-node:
     container_name: squid-net-node
     restart: unless-stopped
     depends_on:
@@ -14,8 +14,8 @@ services:
         - APP_PORT=$APP_PORT
         - CONTAINER_TZ=$TZ
     networks:
-      squid-node-network:
-      external:
+      squidward-node-internal:
+      squidward-node-external:
     env_file:
       - .env
     mem_limit: 2048m
@@ -45,8 +45,8 @@ services:
     ports: # DEV
       - "6380:6379"
     networks:
-      squid-node-network:
-      external: # DEV
+      squidward-node-internal:
+      squidward-node-external: # DEV
     command: /bin/sh -c "redis-server --requirepass $$(cat $$REDIS_PASSWORD_FILE)"
 
     secrets:
@@ -57,8 +57,9 @@ secrets:
     environment: REDIS_PASSWORD
 
 networks:
-  squid-node-network:
-    name: squid_node_network
+  squidward-node-internal:
+    name: squidward_node_internal
     internal: true
-  external:
+  squidward-node-external:
+    name: squidward_node_external
     driver: bridge

@@ -10,7 +10,6 @@ import { utilities as winstonModuleUtilities, WinstonModule } from 'nest-winston
 import { AppModule } from '@/app.module';
 import { isDevelopment } from '@/common/utils/is-development';
 import { INTERNAL_SERVER_PORT } from '@/contracts/constants';
-import { InternalRequest } from '@/common/types/internal-request.type';
 import { InternalServerMiddleware } from '@/common/middleware/internal-server.middleware';
 
 const logger = createLogger({
@@ -37,32 +36,32 @@ async function bootstrap() {
         }),
     });
     app.use(json({ limit: '1000mb' }));
-    
+
     app.use(compression());
-    
+
     const config = app.get(ConfigService);
-    
+
     app.use(helmet());
-    
+
     if (isDevelopment()) {
         app.use(morgan('short'));
     }
-    
+
     app.useGlobalPipes(new ZodValidationPipe());
-    
+
     await app.listen(Number(config.getOrThrow<string>('APP_PORT')));
-    
+
     const httpAdapter = app.getHttpAdapter();
-    const httpServer = httpAdapter.getInstance();
-    
+    const httpServer: any = httpAdapter.getInstance();
+
     const internalApp = express();
     internalApp.use(json({ limit: '1000mb' }));
     internalApp.use(InternalServerMiddleware(httpServer));
-    
+
     const internalServer = internalApp.listen(INTERNAL_SERVER_PORT, '127.0.0.1');
-    
+
     let internalServerClosed = false;
-    
+
     const closeInternalServer = () => {
         if (internalServerClosed) return;
         internalServerClosed = true;
@@ -70,12 +69,12 @@ async function bootstrap() {
             logger.info('Shutting down...');
         });
     };
-    
+
     app.enableShutdownHooks();
-    
+
     process.on('SIGINT', closeInternalServer);
     process.on('SIGTERM', closeInternalServer);
-    
+
     logger.info(`
 ====================================================
 = Internal server started on http://127.0.0.1:${ INTERNAL_SERVER_PORT } =
