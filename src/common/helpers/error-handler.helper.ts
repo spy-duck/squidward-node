@@ -11,19 +11,21 @@ export function errorHandler<T>(response: ICommandResponse<T>): T {
             throw new InternalServerErrorException('No data returned');
         }
         return response.response;
-    } else {
-        if (!response.code) {
-            throw new InternalServerErrorException('Unknown error');
-        }
-        const errorObject = Object.values(ERRORS).find((error) => error.code === response.code);
-        
-        if (!errorObject) {
-            throw new InternalServerErrorException('Unknown error');
-        }
-        throw new HttpExceptionWithErrorCodeType(
-            errorObject.message,
-            errorObject.code,
-            errorObject.httpCode,
-        );
     }
+    
+    if (!response.code) {
+        throw new InternalServerErrorException('Unknown error');
+    }
+    
+    const errorObject = Object.values(ERRORS).find((error) => error.code === response.code);
+    
+    if (!errorObject) {
+        throw new InternalServerErrorException('Unknown error');
+    }
+    
+    throw new HttpExceptionWithErrorCodeType(
+        errorObject.message,
+        errorObject.code,
+        errorObject.httpCode,
+    );
 }

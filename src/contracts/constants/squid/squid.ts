@@ -1,0 +1,1 @@
+export const SQUID_CONFIG = '/etc/squid/squid.conf' as const;

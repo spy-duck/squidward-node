@@ -1,10 +1,23 @@
+import fs from 'node:fs/promises';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ICommandResponse } from '@/common/types';
 import { ERRORS } from '@contract/constants';
-import { TRestartSquidRequest, TStartSquidRequest, TStopSquidRequest } from '@/modules/squid/interfaces';
-import { RestartSquidResponseModel, StartSquidResponseModel } from '@/modules/squid/models';
 import { SupervisordService } from '@/common/libs/supervisord/supervisord.service';
-import { StopSquidResponseModel } from '@/modules/squid/models/stop-squid-response.model';
+import {
+    TRestartSquidRequest,
+    TStartSquidRequest,
+    TStopSquidRequest,
+    TConfigSquidRequest,
+} from './interfaces';
+import {
+    RestartSquidResponseModel,
+    StartSquidResponseModel,
+    StopSquidResponseModel,
+    ConfigSquidResponseModel,
+} from './models';
+import { validateSquidConfig } from '@/common/helpers/validate-squid-config';
+import { SQUID_CONFIG } from '@contract/constants/squid/squid';
+
 
 @Injectable()
 export class SquidService implements OnApplicationBootstrap{
@@ -100,6 +113,62 @@ export class SquidService implements OnApplicationBootstrap{
             await this.startSquid(data);
             
             this.isSquidRunning = true;
+            
+            return {
+                success: true,
+                response: new RestartSquidResponseModel(true),
+            };
+        } catch (error) {
+            this.logger.error(error);
+            let message = '';
+            if (error instanceof Error) {
+                message = error.message;
+            }
+            return {
+                success: false,
+                code: ERRORS.INTERNAL_SERVER_ERROR.code,
+                response: new RestartSquidResponseModel(false, message),
+            };
+        }
+    }
+    
+    async configSquid(data: TConfigSquidRequest): Promise<ICommandResponse<ConfigSquidResponseModel>> {
+        try {
+            const SQUID_CONFIG_TMP = `/tmp/squid.conf.tmp`;
+            
+            await fs.writeFile(
+                SQUID_CONFIG_TMP,
+                data.config,
+            );
+            
+            const configValidation = await validateSquidConfig(SQUID_CONFIG_TMP);
+            
+            await fs.rm(SQUID_CONFIG_TMP);
+            
+            if (!configValidation.isValid) {
+                this.logger.error(configValidation.errors);
+                return {
+                    success: false,
+                    code: ERRORS.SQUID_CONFIG_VALIDATION_FAILED.code,
+                    response: new RestartSquidResponseModel(
+                        false,
+                        ERRORS.SQUID_CONFIG_VALIDATION_FAILED.message,
+                    ),
+                };
+            }
+            
+            await fs.writeFile(
+                SQUID_CONFIG,
+                data.config,
+                {
+                    flush: true,
+                },
+            );
+            
+            if (this.isSquidRunning) {
+                await this.stopSquid(data);
+                await this.startSquid(data);
+            }
             
             return {
                 success: true,

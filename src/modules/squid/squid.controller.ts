@@ -1,12 +1,13 @@
 import { SQUID_CONTROLLER, SQUID_ROUTES } from '@/contracts';
 import { Body, Controller, Post } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
+import { SquidService } from './squid.service';
 import {
     RestartSquidRequestDto, RestartSquidResponseDto,
     StartSquidRequestDto, StartSquidResponseDto,
     StopSquidRequestDto, StopSquidResponseDto,
-} from '@/modules/squid/dto';
-import { SquidService } from '@/modules/squid/squid.service';
+    ConfigSquidRequestDto, ConfigSquidResponseDto,
+} from './dto';
 
 
 @Controller(SQUID_CONTROLLER)
@@ -34,6 +35,15 @@ export class SquidController {
     @Post(SQUID_ROUTES.RESTART)
     public async restartSquid(@Body() body: RestartSquidRequestDto): Promise<RestartSquidResponseDto> {
         const response = await this.squidService.restartSquid(body);
+        const data = errorHandler(response);
+        return {
+            response: data,
+        };
+    }
+    
+    @Post(SQUID_ROUTES.CONFIG)
+    public async configSquid(@Body() body: ConfigSquidRequestDto): Promise<ConfigSquidResponseDto> {
+        const response = await this.squidService.configSquid(body);
         const data = errorHandler(response);
         return {
             response: data,
