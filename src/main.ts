@@ -9,7 +9,7 @@ import winston, { createLogger } from 'winston';
 import { utilities as winstonModuleUtilities, WinstonModule } from 'nest-winston';
 import { AppModule } from '@/app.module';
 import { isDevelopment } from '@/common/utils/is-development';
-import { INTERNAL_SERVER_PORT } from '@/contracts/constants';
+import { INTERNAL_SERVER_PORT } from '../libs/contracts/constants';
 import { InternalServerMiddleware } from '@/common/middleware/internal-server.middleware';
 
 const logger = createLogger({
@@ -49,7 +49,14 @@ async function bootstrap() {
 
     app.useGlobalPipes(new ZodValidationPipe());
 
-    await app.listen(Number(config.getOrThrow<string>('APP_PORT')));
+    await app.listen(Number(config.getOrThrow<string>('APP_PORT')), '0.0.0.0')
+        .then(() => {
+            logger.info(`
+====================================================
+= Application is running on: http://localhost:${ config.getOrThrow<string>('APP_PORT') } =
+====================================================
+            `);
+        });
 
     const httpAdapter = app.getHttpAdapter();
     const httpServer: any = httpAdapter.getInstance();

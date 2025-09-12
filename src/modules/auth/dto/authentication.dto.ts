@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { AuthenticationContract } from '@/contracts';
+import { AuthenticationContract } from '../../../../libs/contracts';
 
 
 export class AuthenticationRequestDto extends createZodDto(AuthenticationContract.RequestSchema) {}

@@ -4,12 +4,14 @@ import { UsersModule } from './users/users.module';
 import { RedisService } from '@/common/libs/redis/redis.service';
 import { SquidModule } from '@/modules/squid/squid.module';
 import { AuthModule } from '@/modules/auth/auth.module';
+import { NodeModule } from '@/modules/node/node.module';
 
 @Module({
     imports: [
         AuthModule,
         UsersModule,
         SquidModule,
+        NodeModule,
     ],
     providers: [],
 })

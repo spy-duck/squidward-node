@@ -13,6 +13,8 @@ services:
         - DOMAIN=$DOMAIN
         - APP_PORT=$APP_PORT
         - CONTAINER_TZ=$TZ
+    ports:
+      - "$APP_PORT:$APP_PORT"
     networks:
       squidward-node-internal:
       squidward-node-external:

@@ -27,7 +27,7 @@
         "./src/*"
       ],
       "@contract/*": [
-        "./src/contracts/*"
+        "./libs/contracts/*"
       ],
       "@authConnector/auth-connector": [
         "libs/auth-connector/src"

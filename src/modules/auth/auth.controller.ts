@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
-import { AUTH_CONTROLLER, AUTH_ROUTES } from '@/contracts';
+import { AUTH_CONTROLLER, AUTH_ROUTES } from '../../../libs/contracts';
 import { InternalServerGuard } from '@/common/guards/internal-server/internal-server.guard';
 import {
     AuthenticationRequestDto, AuthenticationResponseDto,

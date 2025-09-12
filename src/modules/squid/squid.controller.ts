@@ -1,4 +1,4 @@
-import { SQUID_CONTROLLER, SQUID_ROUTES } from '@/contracts';
+import { SQUID_CONTROLLER, SQUID_ROUTES } from '../../../libs/contracts';
 import { Body, Controller, Post } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
 import { SquidService } from './squid.service';

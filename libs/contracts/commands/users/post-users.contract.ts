@@ -1,11 +1,19 @@
 import { z } from 'zod';
-import { REST_API } from '@/contracts';
+import { REST_API } from '../../api';
 
-export namespace SquidConfigContract {
-    export const url = REST_API.SQUID.CONFIG;
+export namespace PostUsersContract {
+    export const url = REST_API.USERS.POST;
+    
+    const User = z.object({
+        id: z.uuid(),
+        username: z.string(),
+        password: z.string(),
+    });
     
     export const RequestSchema = z.object({
-        config: z.string(),
+        data: z.array(
+            User,
+        ),
     });
     
     export type Request = z.infer<typeof RequestSchema>;

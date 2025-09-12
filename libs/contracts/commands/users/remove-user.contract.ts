@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { REST_API } from '@/contracts/api';
+import { REST_API } from '../../api';
 
 export namespace RemoveUserContract {
     export const url = REST_API.USERS.REMOVE;

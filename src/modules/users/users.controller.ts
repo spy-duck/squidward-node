@@ -1,4 +1,4 @@
-import { USERS_CONTROLLER, USERS_ROUTES } from '@/contracts';
+import { USERS_CONTROLLER, USERS_ROUTES } from '../../../libs/contracts';
 import { Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import {

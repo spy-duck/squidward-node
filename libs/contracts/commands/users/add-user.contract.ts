@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { REST_API } from '@/contracts/api';
+import { REST_API } from '../../api';
 
-export namespace AuthenticationContract {
-    export const url = REST_API.AUTH.AUTHENTICATION;
+export namespace AddUserContract {
+    export const url = REST_API.USERS.ADD;
     
     export const RequestSchema = z.object({
+        id: z.uuid(),
         username: z.string(),
         password: z.string(),
     });

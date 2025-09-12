@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { SquidStartContract } from '@/contracts';
+import { SquidStartContract } from '../../../../libs/contracts';
 
 
 export class StartSquidRequestDto extends createZodDto(SquidStartContract.RequestSchema) {}

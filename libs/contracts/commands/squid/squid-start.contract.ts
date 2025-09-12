@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { REST_API } from '@/contracts';
+import { REST_API } from '../../index';
 
-export namespace SquidRestartContract {
-    export const url = REST_API.SQUID.RESTART;
+export namespace SquidStartContract {
+    export const url = REST_API.SQUID.START;
     
     export const RequestSchema = z.any();
     
