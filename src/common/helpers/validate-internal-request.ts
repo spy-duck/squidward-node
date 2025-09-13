@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { INTERNAL_ALLOWED_CONTROLLERS, INTERNAL_USER_AGENT } from '@contract/constants';
-import { ROOT } from '@/contracts';
+import { ROOT } from '@contract/api';
 
 export function validateInternalRequest(req: Request): boolean {
     console.log(req);

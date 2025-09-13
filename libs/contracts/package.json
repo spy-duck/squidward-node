@@ -1,6 +1,7 @@
 {
   "name": "@swuidward-node/contracts",
   "packageManager": "yarn@4.9.4",
+  "type": "commonjs",
   "dependencies": {
     "zod": "^4.1.8"
   }
