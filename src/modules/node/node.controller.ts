@@ -13,6 +13,7 @@ export class NodeController {
     public async health(): Promise<NodeHealthDto> {
         const response = await this.nodeService.health();
         const data = errorHandler(response);
+        
         return {
             response: data,
         };

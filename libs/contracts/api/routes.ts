@@ -1,6 +1,6 @@
 import * as CONTROLLERS from './controllers';
 
-export const ROOT = '/node' as const;
+export const ROOT = '' as const;
 
 export const REST_API = {
     AUTH: {

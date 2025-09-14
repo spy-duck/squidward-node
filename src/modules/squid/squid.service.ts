@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ICommandResponse } from '@/common/types';
-import { ERRORS } from '@contract/constants';
+import { ERRORS, SQUID_PROCESS_NAME } from '@contract/constants';
 import { SupervisordService } from '@/common/libs/supervisord/supervisord.service';
 import {
     TRestartSquidRequest,
@@ -21,7 +21,6 @@ import { SQUID_CONFIG } from '@contract/constants/squid/squid';
 
 @Injectable()
 export class SquidService implements OnApplicationBootstrap{
-    private readonly squidProcessName = 'squid-node';
     private readonly logger = new Logger(SquidService.name);
     private isSquidRunning: boolean = false;
     
@@ -30,7 +29,7 @@ export class SquidService implements OnApplicationBootstrap{
     ) {}
     
     async onApplicationBootstrap() {
-        const squidProcessInfo = await this.supervisordService.getProcessInfo(this.squidProcessName);
+        const squidProcessInfo = await this.supervisordService.getProcessInfo(SQUID_PROCESS_NAME);
         this.isSquidRunning = squidProcessInfo.state === 20;
     }
     
@@ -44,7 +43,7 @@ export class SquidService implements OnApplicationBootstrap{
                 };
             }
             
-            await this.supervisordService.startProcess(this.squidProcessName);
+            await this.supervisordService.startProcess(SQUID_PROCESS_NAME);
             
             this.isSquidRunning = true;
             
@@ -76,7 +75,7 @@ export class SquidService implements OnApplicationBootstrap{
                 };
             }
             
-            await this.supervisordService.stopProcess(this.squidProcessName);
+            await this.supervisordService.stopProcess(SQUID_PROCESS_NAME);
             
             this.isSquidRunning = false;
             

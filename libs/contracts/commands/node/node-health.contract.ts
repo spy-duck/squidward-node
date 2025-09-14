@@ -8,7 +8,8 @@ export namespace NodeHealthContract {
         response: z.object({
             success: z.boolean(),
             error: z.string().nullable(),
-            status: z.literal('OK'),
+            state: z.string().nullable(),
+            status: z.literal('ok'),
         }),
     });
     
