@@ -26,7 +26,7 @@ import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module'
             useFactory: (config: ConfigService) => ({
                 database: 10,
                 host: 'redis',
-                port: 6379,
+                port: 6380,
                 password: config.get('REDIS_PASSWORD'),
             }),
         }),
