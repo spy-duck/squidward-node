@@ -1,5 +1,7 @@
 import readline from 'node:readline';
 
+const INTERNAL_SERVER_PORT = 9053;
+
 export async function initSquidAuthHandler() {
     try {
         const rl = readline.createInterface({
@@ -9,7 +11,7 @@ export async function initSquidAuthHandler() {
         });
         
         async function main(username, password) {
-            const response = await fetch('http://localhost:9090/auth/authentication', {
+            const response = await fetch(`http://localhost:${INTERNAL_SERVER_PORT}/auth/authentication`, {
                 method: 'POST',
                 headers: {
                     'User-Agent': 'squid-connector',
