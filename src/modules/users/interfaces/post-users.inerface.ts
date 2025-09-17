@@ -1,6 +1,6 @@
 export interface TPostUsersRequest {
     data: {
-        id: string;
+        uuid: string;
         username: string;
         password: string;
     }[];

@@ -23,12 +23,15 @@ import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module'
         RedisModule.registerAsync({
             imports: [ ConfigModule ],
             inject: [ ConfigService ],
-            useFactory: (config: ConfigService) => ({
-                database: 10,
-                host: 'redis',
-                port: 6380,
-                password: config.get('REDIS_PASSWORD'),
-            }),
+            useFactory: (config: ConfigService) => {
+                console.log(config.get('REDIS_PASSWORD'))
+                return ({
+                    database: 10,
+                    host: 'redis',
+                    port: 6380,
+                    password: config.get('REDIS_PASSWORD'),
+                })
+            },
         }),
         SquidNodeModule,
     ],

@@ -1,5 +1,5 @@
 export interface TAddUserRequest {
-    id: string;
+    uuid: string;
     username: string;
     password: string;
 }

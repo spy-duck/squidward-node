@@ -3,7 +3,7 @@ services:
     container_name: squid-net-node
     restart: unless-stopped
     depends_on:
-      - redis
+      - squidward-node-valkey
     build:
       context: .
       dockerfile: dev.Dockerfile
@@ -30,28 +30,26 @@ services:
       - npm start:dev
 
 
-  redis:
-    image: redis:alpine
+  squidward-node-valkey:
+    image: valkey/valkey:9.0-alpine3.22
+    container_name: squidward-node-valkey
+    hostname: squidward-node-valkey
     restart: unless-stopped
     volumes:
-      - ./.data/redis:/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=no
-      - REDIS_PASSWORD_FILE=/run/secrets/redis_password
+      - squidward-node-valkey-vol:/data
+    networks:
+      squidward-node-internal:
+      squidward-node-external: # DEV
     expose:
       - 6379
     ports: # DEV
       - "6380:6379"
-    networks:
-      squidward-node-internal:
-      squidward-node-external: # DEV
-    command: /bin/sh -c "redis-server --requirepass $$(cat $$REDIS_PASSWORD_FILE)"
-
     secrets:
-      - redis_password
+      - valkey_password
+    entrypoint: "/bin/sh -c \"valkey-server --requirepass $$(cat /run/secrets/valkey_password)\""
 
 secrets:
-  redis_password:
+  valkey_password:
     environment: REDIS_PASSWORD
 
 networks:
@@ -61,3 +59,9 @@ networks:
   squidward-node-external:
     name: squidward_node_external
     driver: bridge
+
+volumes:
+  squidward-node-valkey-vol:
+    driver: local
+    external: false
+    name: squidward-node-valkey-vol

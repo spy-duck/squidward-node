@@ -5,7 +5,7 @@ export namespace PostUsersContract {
     export const url = REST_API.USERS.POST;
     
     const User = z.object({
-        id: z.uuid(),
+        uuid: z.uuid(),
         username: z.string(),
         password: z.string(),
     });
