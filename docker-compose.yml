@@ -1,16 +1,34 @@
 services:
-  proxy:
-    container_name: spy-duck-proxy
-    build:
-      context: .
-      dockerfile: Dockerfile
+  squidward-node:
+    container_name: squidwardproxy/squidward-node
     restart: unless-stopped
-    ports:
-#      - 3128:3128
-      - 3129:3129
+
+  squidward-redis:
+    image: valkey/valkey:9.0-alpine3.22
+    container_name: squidward-redis
+    hostname: squidward-redis
+    restart: always
+    networks:
+      squidward-node-internal:
+    expose:
+      - '6379'
     volumes:
-      - ./squid.conf:/etc/squid/squid.conf
-      - ./auth.js:/etc/squid/auth.js
-      - /etc/letsencrypt/live/nl.spy-duck-ext.xyz/fullchain.pem:/etc/squid/certs/fullchain.pem
-      - /etc/letsencrypt/live/nl.spy-duck-ext.xyz/privkey.pem:/etc/squid/certs/privkey.pem
-      - /etc/letsencrypt/live/nl.spy-duck-ext.xyz/squid.pem:/etc/squid/certs/squid.pem
+      - squidward-redis-vol:/data
+    environment:
+      - VALKEY_PASSWORD_FILE=/run/secrets/valkey-password
+    command: /bin/sh -c "redis-server --requirepass $$(cat $$REDIS_PASSWORD_FILE)"
+
+    secrets:
+      - redis_password
+
+secrets:
+  redis_password:
+    environment: REDIS_PASSWORD
+
+networks:
+  squidward-node-internal:
+    name: squidward_node_internal
+    internal: true
+  squidward-node-external:
+    name: squidward_node_external
+    driver: bridge

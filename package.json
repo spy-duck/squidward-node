@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
+    "consola": "^3.4.2",
     "helmet": "^8.1.0",
     "morgan": "^1.10.1",
     "nest-winston": "^1.10.2",
@@ -63,6 +64,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
