@@ -22,7 +22,7 @@ export class UsersService {
             // Save users
             for (const user of data.data) {
                 await this.usersRepository.create(new UserEntity(
-                    user.id,
+                    user.uuid,
                     user.username,
                     user.password,
                 ));
@@ -49,7 +49,7 @@ export class UsersService {
     async addUser(data: TAddUserRequest): Promise<ICommandResponse<AddUserResponseModel>> {
         try {
             await this.usersRepository.create(new UserEntity(
-                data.id,
+                data.uuid,
                 data.username,
                 data.password,
             ));

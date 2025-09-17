@@ -5,7 +5,7 @@ export namespace AddUserContract {
     export const url = REST_API.USERS.ADD;
     
     export const RequestSchema = z.object({
-        id: z.uuid(),
+        uuid: z.uuid(),
         username: z.string(),
         password: z.string(),
     });
