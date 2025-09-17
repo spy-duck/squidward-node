@@ -5,10 +5,8 @@ import packageJson from 'package.json';
 
 const packageManager = 'yarn';
 
-(async () => {
-    const isCnfirmStart = await consola.prompt('Confirm deploy', { type: 'confirm' });
-    
-    if (!isCnfirmStart) {
+void (async () => {
+    if (!await consola.prompt('Confirm deploy', { type: 'confirm' })) {
         consola.log('Exit...');
         process.exit(0);
     }
@@ -24,16 +22,23 @@ const packageManager = 'yarn';
     spawnSync(packageManager, [ 'build:squid-auth-handler' ], { stdio: 'inherit', shell: true });
     consola.success('Squid-auth-handler build finished');
     
-    consola.log('Exit...');
-    spawnSync(
-        'docker',
-        [
+    spawnSync('docker', [
             'build',
             '--progress=plain',
             '-t',
             `squidwardproxy/squidward-node:${packageJson.version}`,
             '.'
-        ],
-        { stdio: 'inherit', shell: true },
-    );
+        ], { stdio: 'inherit', shell: true });
+    consola.success('Docker image build finished');
+    
+    if (await consola.prompt('Push docker image to Docker Hub', { type: 'confirm' })) {
+        spawnSync('docker', [
+            'push',
+            `squidwardproxy/squidward-node:${packageJson.version}`,
+        ], { stdio: 'inherit', shell: true });
+    }
+    
+    consola.log('Exit...');
+    process.exit(0);
+    
 })();
