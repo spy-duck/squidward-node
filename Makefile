@@ -3,3 +3,6 @@ docker_build:
 
 deploy:
 	tsx ./shell/deploy.js
+
+dev_build:
+	tsx ./shell/deploy.js --yes --no-push

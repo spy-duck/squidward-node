@@ -24,12 +24,14 @@ import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module'
             imports: [ ConfigModule ],
             inject: [ ConfigService ],
             useFactory: (config: ConfigService) => {
-                console.log(config.get('REDIS_PASSWORD'))
+                console.log('REDIS_PASSWORD', config.getOrThrow('REDIS_PASSWORD'))
                 return ({
                     database: 10,
                     host: 'redis',
-                    port: 6380,
-                    password: config.get('REDIS_PASSWORD'),
+                    port: config.get('REDIS_PORT')
+                        ? +config.get('REDIS_PORT')
+                        : 6379,
+                    password: config.getOrThrow('REDIS_PASSWORD'),
                 })
             },
         }),

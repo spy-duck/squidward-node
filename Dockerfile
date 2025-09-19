@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM node:22-bookworm
 
 ARG CONTAINER_TZ=UTC
 
@@ -64,18 +64,6 @@ RUN cd /tmp/squid && ./configure \
 RUN cd /tmp/squid && make
 RUN cd /tmp/squid && make install
 
-
-# setup NVM
-COPY ./.nvmrc .
-ENV BASH_ENV /root/.bash_env
-RUN touch "${BASH_ENV}" && echo '. "${BASH_ENV}"' >> ~/.bashrc
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | PROFILE="${BASH_ENV}" bash
-RUN nvm install
-RUN nvm use default
-RUN node -v
-
-
-
 # setup acme.sh
 RUN mkdir -p /etc/squid/certs
 COPY shell/cert-renew-hook.sh /etc/squid/certs
@@ -92,14 +80,18 @@ COPY ./supervisord.conf .
 COPY shell/start-squid.sh /etc/squid/start-squid.sh
 RUN chmod +x /etc/squid/start-squid.sh
 
-COPY ./dist/libs/squid-auth-handler/index.js /etc/squid/squid-auth-connector.js
+COPY ./shell/squid-auth-connector.js /etc/squid/squid-auth-connector.js
 RUN chmod +x /etc/squid/squid-auth-connector.js
 RUN chown squid:squid /etc/squid/squid-auth-connector.js
 RUN chmod 700 /etc/squid/squid-auth-connector.js
 
 COPY shell/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 
+COPY ./package.json .
+RUN npm install
+
 COPY ./dist/src/main.js .
+COPY ./dist/libs/squid-auth-handler/index.js /app/squid-auth-handler.js
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 

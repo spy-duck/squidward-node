@@ -48,12 +48,14 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@types/bcrypt": "^6",
+    "@types/command-line-args": "^5.2.3",
     "@types/compression": "^1",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "command-line-args": "^6.0.1",
     "eslint": "^9.18.0",
     "globals": "^16.0.0",
     "jest": "^30.0.0",
@@ -92,5 +94,5 @@
       "^@authConnector/auth-connector(|/.*)$": "<rootDir>/libs/auth-connector/src/$1"
     }
   },
-  "packageManager": "yarn@4.9.4"
+  "packageManager": "yarn@4.10.2"
 }

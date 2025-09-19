@@ -1,5 +1,10 @@
 #!/bin/bash
 
+LETSENCRYPT_EMAIL=$(cat /run/secrets/letsencrypt_email)
+DOMAIN=$(cat /run/secrets/domain)
+export REDIS_PASSWORD=$(cat /run/secrets/valkey_password)
+export APP_PORT=$(cat /run/secrets/app_port)
+
 echo "[Entrypoint] Starting entrypoint script..."
 
 n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; cp -r $n/{bin,lib,share} /usr/local
