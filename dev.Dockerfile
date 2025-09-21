@@ -78,7 +78,7 @@ RUN node -v
 
 # setup acme.sh
 RUN mkdir -p /etc/squid/certs
-COPY shell/cert-renew-hook.sh /etc/squid/certs
+COPY shell/cert-renew-hook.sh .
 
 RUN apt install -y apache2-utils supervisor
 

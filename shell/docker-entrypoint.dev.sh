@@ -17,7 +17,7 @@ if [ ! -f /root/.acme.sh/acme.sh ]; then
     --fullchain-file /etc/squid/certs/fullchain.pem \
     --alpn \
     --tlsport 8443 \
-    --renew-hook "/etc/squid/certs/cert-renew-hook.sh" \
+    --renew-hook "/app/cert-renew-hook.sh" \
     || echo "Error: Failed to get certificate" && exit 1
 fi
 

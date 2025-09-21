@@ -4,8 +4,8 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - squidward-node-certs-vol:/etc/squid/certs
-      - squidward-node-acme-vol:/root/.acme.sh
+      - ./.data/.acme.sh:/root/.acme.sh
+      - ./.data/certs/:/etc/squid/certs
       - ./.data/squid/logs:/var/log/squid
       - ./.data/squid/spool:/var/log/spool
     secrets:
@@ -41,14 +41,6 @@ secrets:
     environment: APP_PORT
 
 volumes:
-  squidward-node-certs-vol:
-    driver: local
-    external: false
-    name: squidward-node-certs-vol
-  squidward-node-acme-vol:
-    driver: local
-    external: false
-    name: squidward-node-acme-vol
   squidward-node-valkey-vol:
     driver: local
     external: false

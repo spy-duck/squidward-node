@@ -4,15 +4,17 @@ import { colorize } from 'consola/utils';
 import packageJson from 'package.json';
 import commandLineArgs from 'command-line-args';
 
-const packageManager = 'yarn';
+const packageManager = 'npm';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 const options = commandLineArgs([
     { name: 'yes', alias: 'y', type: Boolean },
     { name: 'no-push', alias: 'n', type: Boolean },
+    { name: 'no-cache', alias: 'c', type: Boolean },
 ]) as {
     yes: boolean,
-    'no-push': boolean
+    'no-push': boolean,
+    'no-cache': boolean,
 };
 
 void (async () => {
@@ -33,26 +35,30 @@ void (async () => {
         process.exit(0);
     }
     
-    consola.start(`Starting build v${ packageJson.version }...`);
+    consola.start(`Starting deploy v${ packageJson.version }...`);
     
     loader.start('Cleaning dist directory');
     spawnSync('rm', [ '-rf', 'dist' ]);
     loader.stop();
     consola.success('Dist directory cleaned');
     
-    loader.start('Building app');
-    spawnSync(packageManager, [ 'build' ], {stdio: 'ignore', shell: true});
+    consola.start(`Starting building api`);
+    loader.start('Building api');
+    spawnSync(packageManager, [ 'run', 'build' ], {stdio: 'ignore', shell: true});
     loader.stop();
-    consola.success('App build finished');
+    consola.success('Api build finished');
     
+    consola.start(`Starting building auth handler`);
     loader.start('Building squid-auth-handler');
-    spawnSync(packageManager, [ 'build:squid-auth-handler' ], { stdio: 'inherit', shell: true });
+    spawnSync(packageManager, [ 'run', 'build:squid-auth-handler' ], { stdio: 'inherit', shell: true });
     loader.stop();
     consola.success('Squid-auth-handler build finished');
     
+    consola.start(`Starting building docker image`);
     spawnSync('docker', [
         'build',
         '--progress=plain',
+        ...(options['no-cache'] ? ['--no-cache'] : []),
         '-t',
         `squidwardproxy/squidward-node:${ packageJson.version }`,
         '.',

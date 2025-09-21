@@ -1,1 +1,1 @@
- cat /etc/squid/certs/privkey.pem /etc/squid/certs/fullchain.pem > /etc/squid/certs/squid.pem
+cat /etc/squid/certs/privkey.key /etc/squid/certs/fullchain.pem > /etc/squid/certs/squid.pem

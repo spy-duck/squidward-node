@@ -66,7 +66,7 @@ RUN cd /tmp/squid && make install
 
 # setup acme.sh
 RUN mkdir -p /etc/squid/certs
-COPY shell/cert-renew-hook.sh /etc/squid/certs
+COPY shell/cert-renew-hook.sh .
 
 RUN apt install -y apache2-utils supervisor
 
@@ -88,6 +88,8 @@ RUN chmod 700 /etc/squid/squid-auth-connector.js
 COPY shell/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 
 COPY ./package.json .
+COPY ./package-lock.json .
+
 RUN npm install
 
 COPY ./dist/src/main.js .
