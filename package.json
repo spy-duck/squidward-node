@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "yarn prebuild && NODE_ENV=production && yarn build:node && yarn build:squid-auth-handler",
+    "build": "NODE_ENV=production && npm run build:node",
     "build:node": "NODE_ENV=production nest build",
     "build:squid-auth-handler": "NODE_ENV=production nest build squid-auth-handler",
     "start": "nest start",
@@ -19,8 +19,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prebuild": "rimraf dist"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -48,16 +47,17 @@
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@types/bcrypt": "^6",
+    "@types/command-line-args": "^5.2.3",
     "@types/compression": "^1",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/morgan": "^1.9.10",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "command-line-args": "^6.0.1",
     "eslint": "^9.18.0",
     "globals": "^16.0.0",
     "jest": "^30.0.0",
-    "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -91,6 +91,5 @@
     "moduleNameMapper": {
       "^@authConnector/auth-connector(|/.*)$": "<rootDir>/libs/auth-connector/src/$1"
     }
-  },
-  "packageManager": "yarn@4.9.4"
+  }
 }

@@ -3,6 +3,7 @@ import { ICommandResponse } from '@/common/types';
 import { ERRORS, SQUID_PROCESS_NAME } from '@contract/constants';
 import { NodeHealthResponseModel } from '@/modules/node/models';
 import { SupervisordService } from '@/common/libs/supervisord/supervisord.service';
+import packageJson from '../../../package.json';
 
 @Injectable()
 export class NodeService {
@@ -12,13 +13,17 @@ export class NodeService {
         private readonly supervisordService: SupervisordService,
     ) {}
     
-    // eslint-disable-next-line @typescript-eslint/require-await
     async health(): Promise<ICommandResponse<NodeHealthResponseModel>> {
         try {
             const squidProcessInfo = await this.supervisordService.getProcessInfo(SQUID_PROCESS_NAME);
             return {
                 success: true,
-                response: new NodeHealthResponseModel(true, null, squidProcessInfo.statename),
+                response: new NodeHealthResponseModel(
+                    true,
+                    null,
+                    squidProcessInfo.statename,
+                    packageJson.version,
+                ),
             };
         } catch (error) {
             this.logger.error(error);

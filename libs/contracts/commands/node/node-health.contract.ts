@@ -10,6 +10,7 @@ export namespace NodeHealthContract {
             error: z.string().nullable(),
             state: z.string().nullable(),
             status: z.literal('ok'),
+            version: z.string().nullable(),
         }),
     });
     

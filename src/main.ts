@@ -26,7 +26,8 @@ const logger = createLogger({
             appName: false,
         }),
     ),
-    level: isDevelopment() ? 'debug' : 'info',
+    // level: isDevelopment() ? 'debug' : 'info',
+    level: 'debug',
 });
 
 async function bootstrap() {
@@ -45,6 +46,12 @@ async function bootstrap() {
 
     if (isDevelopment()) {
         app.use(morgan('short'));
+    } else {
+        app.use(
+            morgan(
+                ':remote-addr - ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"',
+            ),
+        );
     }
 
     app.useGlobalPipes(new ZodValidationPipe());
