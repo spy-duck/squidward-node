@@ -4,7 +4,7 @@ import { UsersService } from '@/modules/users/users.service';
 import {
     PostUsersRequestDto, PostUsersResponseDto,
     AddUserRequestDto, AddUserResponseDto,
-    RemoveUserRequestDto, RemoveUserResponseDto,
+    RemoveUserRequestDto, RemoveUserResponseDto, UpdateUserRequestDto, UpdateUserResponseDto,
 } from '@/modules/users/dto';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
 
@@ -40,4 +40,12 @@ export class UsersController {
         };
     }
     
+    @Post(USERS_ROUTES.UPDATE)
+    public async updateUser(@Body() body: UpdateUserRequestDto): Promise<UpdateUserResponseDto> {
+        const response = await this.usersService.updateUser(body);
+        const data = errorHandler(response);
+        return {
+            response: data,
+        };
+    }
 }

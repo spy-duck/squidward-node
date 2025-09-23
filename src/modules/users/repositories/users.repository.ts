@@ -23,7 +23,7 @@ export class UsersRepository {
         
         await this.redisService.client.hSet(
             `${REDIS_KEYS.USERNAME}:${user.username}`,
-            'id',
+            'uuid',
             user.uuid,
         );
         
@@ -71,10 +71,10 @@ export class UsersRepository {
             return;
         }
         await this.redisService.client.del(
-            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            `${REDIS_KEYS.USERNAME}:${user.username}`,
         );
         await this.redisService.client.del(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            `${REDIS_KEYS.UUID}:${user.uuid}`,
         );
     }
     
@@ -124,5 +124,42 @@ export class UsersRepository {
             userByUuid.username,
             user.password,
         );
+    }
+    
+    async update(user: UserEntity): Promise<UserEntity | null> {
+        
+        const currentUser = await this.getByUuid(user.uuid);
+        
+        if (!currentUser) {
+            return null;
+        }
+        
+        await this.redisService.client.del(
+            `${REDIS_KEYS.USERNAME}:${currentUser.username}`,
+        );
+
+        await this.redisService.client.hSet(
+            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            'password',
+            user.password,
+        );
+        
+        await this.redisService.client.hSet(
+            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            'uuid',
+            user.uuid,
+        );
+        
+        await this.redisService.client.del(
+            `${REDIS_KEYS.UUID}:${user.uuid}`,
+        );
+        
+        await this.redisService.client.hSet(
+            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            'username',
+            user.username,
+        );
+        
+        return user;
     }
 }
