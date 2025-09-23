@@ -1,3 +1,3 @@
 export interface TRemoveUsersRequest {
-    username: string;
+    userUuid: string;
 }

@@ -73,7 +73,7 @@ export class UsersService {
     
     async removeUser(data: TRemoveUsersRequest): Promise<ICommandResponse<RemoveUserResponseModel>> {
         try {
-            await this.usersRepository.remove(data.username);
+            await this.usersRepository.remove(data.userUuid);
             return {
                 success: true,
                 response: new AddUserResponseModel(true),

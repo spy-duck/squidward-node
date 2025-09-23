@@ -5,7 +5,7 @@ export namespace RemoveUserContract {
     export const url = REST_API.USERS.REMOVE;
     
     export const RequestSchema = z.object({
-        username: z.string(),
+        userUuid: z.uuid(),
     });
     
     export type Request = z.infer<typeof RequestSchema>;
