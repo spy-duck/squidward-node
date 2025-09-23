@@ -2,6 +2,8 @@ services:
   squidward-node:
     image: squidwardproxy/squidward-node:0.0.1
     restart: unless-stopped
+    depends_on:
+      - squidward-node-valkey
     network_mode: host
     volumes:
       - ./.data/.acme.sh:/root/.acme.sh

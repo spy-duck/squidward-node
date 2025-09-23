@@ -1,18 +1,9 @@
 services:
   squidward-node:
-    container_name: squid-net-node
+    image: squidwardproxy/squidward-node:0.0.1
     restart: unless-stopped
     depends_on:
       - squidward-node-valkey
-    build:
-      context: .
-      dockerfile: dev.Dockerfile
-      args:
-        - SQUID_VERSION=$SQUID_VERSION
-        - LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
-        - DOMAIN=$DOMAIN
-        - APP_PORT=$APP_PORT
-        - CONTAINER_TZ=$TZ
     network_mode: host
     env_file:
       - .env
@@ -22,10 +13,13 @@ services:
       nofile: 1048576
     volumes:
       - ./:/app
-      - ./.data/certs:/etc/squid/certs
       - ./.data/.acme.sh:/root/.acme.sh
-      - ./squid.dev.conf:/etc/squid/squid.conf
-      - ./shell/docker-entrypoint.sh:/usr/local/bin/entrypoint.sh
+      - ./.data/certs/:/etc/squid/certs
+      - ./.data/squid/logs:/var/log/squid
+      - ./.data/squid/spool:/var/log/spool
+      - ./shell/docker-entrypoint.dev.sh:/usr/local/bin/entrypoint.sh
+      - ./shell/squid-auth-connector.js:/app/bin/squid-auth-connector.js
+      - ./dist/libs/squid-auth-handler/index.js:/app/bin/squid-auth-handler.js
     command:
       - npm start:dev
 
@@ -35,15 +29,9 @@ services:
     container_name: squidward-node-valkey
     hostname: squidward-node-valkey
     restart: unless-stopped
+    network_mode: host
     volumes:
       - squidward-node-valkey-vol:/data
-    networks:
-      squidward-node-internal:
-      squidward-node-external: # DEV
-    expose:
-      - 6379
-    ports: # DEV
-      - "6380:6379"
     secrets:
       - valkey_password
     entrypoint: "/bin/sh -c \"valkey-server --requirepass $$(cat /run/secrets/valkey_password)\""
