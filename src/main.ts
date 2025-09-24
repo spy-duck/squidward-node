@@ -9,8 +9,9 @@ import winston, { createLogger } from 'winston';
 import { utilities as winstonModuleUtilities, WinstonModule } from 'nest-winston';
 import { AppModule } from '@/app.module';
 import { isDevelopment } from '@/common/utils/is-development';
-import { INTERNAL_SERVER_PORT } from '../libs/contracts/constants';
+import { INTERNAL_SERVER_PORT } from '@contract/constants';
 import { InternalServerMiddleware } from '@/common/middleware/internal-server.middleware';
+import { parseNodePayload } from '@/common/utils/decode-node-payload';
 
 const logger = createLogger({
     transports: [ new winston.transports.Console() ],
@@ -31,19 +32,28 @@ const logger = createLogger({
 });
 
 async function bootstrap() {
+    const nodeSsl = parseNodePayload();
+    
     const app = await NestFactory.create(AppModule, {
+        httpsOptions: {
+            key: nodeSsl.nodeKeyPem,
+            cert: nodeSsl.nodeCertPem,
+            ca: [ nodeSsl.caCertPem ],
+            requestCert: true,
+            rejectUnauthorized: true,
+        },
         logger: WinstonModule.createLogger({
             instance: logger,
         }),
     });
     app.use(json({ limit: '1000mb' }));
-
+    
     app.use(compression());
-
+    
     const config = app.get(ConfigService);
-
+    
     app.use(helmet());
-
+    
     if (isDevelopment()) {
         app.use(morgan('short'));
     } else {
@@ -53,9 +63,9 @@ async function bootstrap() {
             ),
         );
     }
-
+    
     app.useGlobalPipes(new ZodValidationPipe());
-
+    
     await app.listen(Number(config.getOrThrow<string>('APP_PORT')), '0.0.0.0')
         .then(() => {
             logger.info(`
@@ -64,18 +74,18 @@ async function bootstrap() {
 ====================================================
             `);
         });
-
+    
     const httpAdapter = app.getHttpAdapter();
     const httpServer: any = httpAdapter.getInstance();
-
+    
     const internalApp = express();
     internalApp.use(json({ limit: '1000mb' }));
     internalApp.use(InternalServerMiddleware(httpServer));
-
+    
     const internalServer = internalApp.listen(INTERNAL_SERVER_PORT, '127.0.0.1');
-
+    
     let internalServerClosed = false;
-
+    
     const closeInternalServer = () => {
         if (internalServerClosed) return;
         internalServerClosed = true;
@@ -83,12 +93,12 @@ async function bootstrap() {
             logger.info('Shutting down...');
         });
     };
-
+    
     app.enableShutdownHooks();
-
+    
     process.on('SIGINT', closeInternalServer);
     process.on('SIGTERM', closeInternalServer);
-
+    
     logger.info(`
 ====================================================
 = Internal server started on http://127.0.0.1:${ INTERNAL_SERVER_PORT } =
