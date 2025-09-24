@@ -14,7 +14,6 @@ export function parseNodePayloadFromConfigService(sslCert: string | undefined): 
     if (!sslCert) {
         throw new Error('SSL_CERT is not set');
     }
-    console.log(sslCert);
     
     const decoded = ((): string => {
         try {

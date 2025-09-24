@@ -1,5 +1,5 @@
-import { SQUID_CONTROLLER, SQUID_ROUTES } from '../../../libs/contracts';
-import { Body, Controller, Post } from '@nestjs/common';
+import { SQUID_CONTROLLER, SQUID_ROUTES } from '@contract/api';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
 import { SquidService } from './squid.service';
 import {
@@ -8,8 +8,10 @@ import {
     StopSquidRequestDto, StopSquidResponseDto,
     ConfigSquidRequestDto, ConfigSquidResponseDto,
 } from './dto';
+import { JwtGuard } from '@/common/guards/jwt';
 
 
+@UseGuards(JwtGuard)
 @Controller(SQUID_CONTROLLER)
 export class SquidController {
     constructor(private readonly squidService: SquidService) {}

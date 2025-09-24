@@ -3,6 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SquidNodeModule } from '@/modules/squid-node.module';
 import { RedisModule } from '@/common/libs/redis/redis.module';
 import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module';
+import { JwtModule } from '@nestjs/jwt';
+import { parseNodePayloadFromConfigService } from '@/common/utils/decode-node-payload';
+import { JwtStrategy } from '@/common/guards/jwt/jwt-token.strategy';
 
 @Module({
     imports: [
@@ -36,9 +39,22 @@ import { SupervisordModule } from '@/common/libs/supervisord/supervisord.module'
                 })
             },
         }),
+        JwtModule.registerAsync({
+            imports: [ ConfigModule ],
+            inject: [ ConfigService ],
+            useFactory: (configService: ConfigService) => {
+                const certPayload = parseNodePayloadFromConfigService(
+                    configService.getOrThrow<string>('SSL_CERT'),
+                );
+                return {
+                    secret: certPayload.jwtPublicKey,
+                    algorithms: [ 'RS256' ],
+                };
+            },
+        }),
         SquidNodeModule,
     ],
     controllers: [],
-    providers: [],
+    providers: [JwtStrategy],
 })
 export class AppModule {}

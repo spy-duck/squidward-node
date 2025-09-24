@@ -1,10 +1,12 @@
 import { NODE_CONTROLLER, NODE_ROUTES } from '@contract/api';
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
 import { NodeService } from '@/modules/node/node.service';
 import { NodeHealthDto } from '@/modules/node/dto';
+import { JwtGuard } from '@/common/guards/jwt';
 
 
+@UseGuards(JwtGuard)
 @Controller(NODE_CONTROLLER)
 export class NodeController {
     constructor(private readonly nodeService: NodeService) {}

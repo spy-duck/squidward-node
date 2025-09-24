@@ -1,5 +1,5 @@
-import { USERS_CONTROLLER, USERS_ROUTES } from '../../../libs/contracts';
-import { Body, Controller, Post } from '@nestjs/common';
+import { USERS_CONTROLLER, USERS_ROUTES } from '@contract/api';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import {
     PostUsersRequestDto, PostUsersResponseDto,
@@ -7,8 +7,10 @@ import {
     RemoveUserRequestDto, RemoveUserResponseDto, UpdateUserRequestDto, UpdateUserResponseDto,
 } from '@/modules/users/dto';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
+import { JwtGuard } from '@/common/guards/jwt';
 
 
+@UseGuards(JwtGuard)
 @Controller(USERS_CONTROLLER)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
