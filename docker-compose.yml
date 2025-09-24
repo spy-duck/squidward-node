@@ -15,6 +15,7 @@ services:
       - letsencrypt_email
       - domain
       - app_port
+      - ssl_cert
     mem_limit: 2048m
     ulimits:
       nproc: 1073741816
@@ -41,6 +42,8 @@ secrets:
     environment: DOMAIN
   app_port:
     environment: APP_PORT
+  ssl_cert:
+    environment: SSL_CERT
 
 volumes:
   squidward-node-valkey-vol:

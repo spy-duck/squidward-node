@@ -14,11 +14,22 @@ export function parseNodePayloadFromConfigService(sslCert: string | undefined): 
     if (!sslCert) {
         throw new Error('SSL_CERT is not set');
     }
+    console.log(sslCert);
+    
+    const decoded = ((): string => {
+        try {
+            return Buffer.from(sslCert, 'base64').toString('utf-8');
+        } catch (error) {
+            console.error(error);
+            throw new Error('SSL_CERT failed to parse node payload');
+        }
+    })();
     
     const parsed = ((): INodePayload => {
         try {
-            return JSON.parse(sslCert) as INodePayload;
+            return JSON.parse(decoded) as INodePayload;
         } catch (error) {
+            console.error(error);
             if (error instanceof SyntaxError) {
                 throw new Error('SSL_CERT contains invalid JSON');
             }

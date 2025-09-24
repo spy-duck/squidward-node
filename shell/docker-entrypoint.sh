@@ -4,6 +4,7 @@ LETSENCRYPT_EMAIL=$(cat /run/secrets/letsencrypt_email)
 DOMAIN=$(cat /run/secrets/domain)
 export REDIS_PASSWORD=$(cat /run/secrets/valkey_password)
 export APP_PORT=$(cat /run/secrets/app_port)
+export SSL_CERT=$(cat /run/secrets/ssl_cert)
 
 log_start() {
     echo -e "\033[94m◐ \033[0m$1"
