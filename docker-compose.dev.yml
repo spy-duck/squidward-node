@@ -40,14 +40,6 @@ secrets:
   valkey_password:
     environment: REDIS_PASSWORD
 
-networks:
-  squidward-node-internal:
-    name: squidward_node_internal
-    internal: true
-  squidward-node-external:
-    name: squidward_node_external
-    driver: bridge
-
 volumes:
   squidward-node-valkey-vol:
     driver: local
