@@ -3,6 +3,7 @@
 /node_modules
 /build
 /bin
+/libs/contracts/dist
 
 # Logs
 logs

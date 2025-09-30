@@ -1,17 +1,22 @@
 {
   "name": "@swuidward-node/contracts",
+  "version": "1.0.0",
   "packageManager": "yarn@4.9.4",
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "postinstall": "npm run build"
-  },
-  "dependencies": {
-    "zod": "^4.1.8"
+    "postinstall": "npm install zod && npm run build"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "zod": "^4.1.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "zod": "^4.1.11"
+  },
+  "dependencies": {
+    "zod": "^4.1.7"
   }
 }
