@@ -58,5 +58,9 @@ mkdir -p /var/log/squid
 chown -R squid:squid /var/spool/squid
 chown -R squid:squid /var/log/squid
 
+chmod +x /app/bin/squid-auth-connector.js
+chown squid:squid /app/bin/squid-auth-connector.js
+chmod 700 /app/bin/squid-auth-connector.js
+
 log_start "Starting supervisor and node app..."
 supervisord -c /app/supervisord.conf & NODE_ENV='production' node /app/main.js
