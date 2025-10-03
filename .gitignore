@@ -4,6 +4,8 @@
 /build
 /bin
 /libs/contracts/dist
+/libs/contracts/node_modules
+/libs/contracts/package-lock.json
 
 # Logs
 logs

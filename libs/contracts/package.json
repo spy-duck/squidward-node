@@ -1,5 +1,5 @@
 {
-  "name": "@swuidward-node/contracts",
+  "name": "@squidward-node/contracts",
   "version": "1.0.0",
   "packageManager": "yarn@4.9.4",
   "type": "commonjs",

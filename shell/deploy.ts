@@ -18,6 +18,7 @@ const options = commandLineArgs([
 };
 
 void (async () => {
+    const imageName = 'squidwardproxy/squidward-node';
     let sigTerm = false;
     
     process.on('SIGTERM', () => {
@@ -60,7 +61,9 @@ void (async () => {
         '--progress=plain',
         ...(options['no-cache'] ? ['--no-cache'] : []),
         '-t',
-        `squidwardproxy/squidward-node:${ packageJson.version }`,
+        `${imageName}:${ packageJson.version }`,
+        '-t',
+        `${imageName}:latest`,
         '.',
     ], { stdio: 'inherit', shell: true });
     consola.success('Docker image build finished');
@@ -68,7 +71,7 @@ void (async () => {
     if (!options['no-push'] && await consola.prompt('Push docker image to Docker Hub', { type: 'confirm' })) {
         spawnSync('docker', [
             'push',
-            `squidwardproxy/squidward-node:${ packageJson.version }`,
+            `${imageName}:${ packageJson.version }`,
         ], { stdio: 'inherit', shell: true });
     }
     

@@ -87,11 +87,8 @@ RUN chmod 700 /app/bin/squid-auth-connector.js
 
 COPY shell/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
 
-COPY ./package.json .
-COPY ./package-lock.json .
-
-RUN npm install
-
+COPY package*.json ./
+COPY ./node_modules ./node_modules
 COPY ./dist/src/main.js .
 COPY ./dist/libs/squid-auth-handler/index.js /app/bin/squid-auth-handler.js
 

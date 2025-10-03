@@ -1,0 +1,76 @@
+name: Release node
+
+on:
+  push:
+#    branches: [ "main" ]
+    tags:
+      - '*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: NewTag
+        id: tag
+        uses: JinoArch/get-latest-tag@latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+          npm run build:squid-auth-handler
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            squidwardproxy/squidward-node:latest
+            squidwardproxy/squidward-node:${{ github.ref_name }}
+
+      - name: Create node contracts package
+        run: |
+          cd libs/contracts/
+          npm pack
+          mv squidward-node-contracts-*.tgz  ../../squidward-node-contracts.tgz
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          files: squidward-node-contracts.tgz
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          append_body: true
+          make_latest: true
+          draft: false
+          prerelease: false
+          name: ${{ github.ref_name }}
+          body: |
+            # Squidward Node v${{ github.ref_name }}
+            
+            ${{ env.CHANGELOG }}
+
+            ### 📦 Artifacts
+            - [squidward-node-contracts.tgz](https://github.com/spy-duck/squidward-node/releases/download/${{ github.ref_name }}/squidward-node-contracts.tgz)  - node contracts package for backend integration
