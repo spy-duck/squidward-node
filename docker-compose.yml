@@ -1,6 +1,6 @@
 services:
   squidward-node:
-    image: squidwardproxy/squidward-node:0.0.1
+    image: squidwardproxy/squidward-node
     restart: unless-stopped
     depends_on:
       - squidward-node-valkey
