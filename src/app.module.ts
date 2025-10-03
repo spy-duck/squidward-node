@@ -18,7 +18,7 @@ import { JwtStrategy } from '@/common/guards/jwt/jwt-token.strategy';
             inject: [],
             useFactory: () => ({
                 host: 'localhost',
-                port: 61002,
+                port: 61112,
                 user: 'squidward',
                 password: 'UlJQmtqQ0NBVGVnQXdJQkFnSUhBWF',
             }),
