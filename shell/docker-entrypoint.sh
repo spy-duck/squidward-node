@@ -43,6 +43,7 @@ if [ ! -f /etc/squid/certs/privkey.key ]; then
     --alpn \
     --tlsport 8443 \
     --renew-hook "/app/cert-renew-hook.sh" \
+    --debug 2\
     || log_error "Certificate request failed" && exit 1
 
     bash /app/cert-renew-hook.sh
