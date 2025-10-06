@@ -2,10 +2,10 @@
 
 function do_recreate_tag() {
     tag=$2
-    git fetch origin
-    git tag -d "$tag"
-    git tag "$tag"
-    git push --delete origin "$tag"
+    git fetch origin && \
+    git tag -d "$tag" && \
+    git tag "$tag" && \
+    git push --delete origin "$tag" && \
     git push origin tag "$tag"
 }
 

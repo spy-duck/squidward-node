@@ -46,13 +46,14 @@ if [ ! -f /etc/squid/certs/privkey.key ]; then
     --debug 2\
     || log_error "Certificate request failed" && exit 1
 
-    bash /app/cert-renew-hook.sh
+    /bin/bash /app/cert-renew-hook.sh
 
     log_success "Certificate obtained."
 fi
 
 #squid -k parse
 
+# TODO: move to Dockerfile
 mkdir -p /var/spool/squid
 mkdir -p /var/log/squid
 

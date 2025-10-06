@@ -16,6 +16,7 @@ RUN adduser --system --no-create-home --group --disabled-login squid
 # setup acme.sh
 RUN mkdir -p /etc/squid/certs
 COPY shell/cert-renew-hook.sh .
+RUN chmod +x cert-renew-hook.sh
 
 # cleanup
 RUN apt clean
