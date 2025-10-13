@@ -46,6 +46,7 @@ async function bootstrap() {
             instance: logger,
         }),
     });
+    
     app.use(json({ limit: '1000mb' }));
     
     app.use(compression());

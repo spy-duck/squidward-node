@@ -41,9 +41,11 @@ if [ ! -f /etc/squid/certs/privkey.key ]; then
     --key-file /etc/squid/certs/privkey.key \
     --fullchain-file /etc/squid/certs/fullchain.pem \
     --alpn \
+    --httpport 8080 \
     --tlsport 8443 \
     --renew-hook "/app/cert-renew-hook.sh" \
-    --debug 2\
+    --force \
+    --debug 2 \
     || log_error "Certificate request failed" && exit 1
 
     /bin/bash /app/cert-renew-hook.sh
