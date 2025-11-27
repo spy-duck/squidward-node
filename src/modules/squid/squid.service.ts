@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ICommandResponse } from '@/common/types';
 import { ERRORS, SQUID_PROCESS_NAME } from '@contract/constants';
 import { SupervisordService } from '@/common/libs/supervisord/supervisord.service';
@@ -20,22 +20,21 @@ import { SQUID_CONFIG } from '@contract/constants/squid/squid';
 
 
 @Injectable()
-export class SquidService implements OnApplicationBootstrap{
+export class SquidService {
     private readonly logger = new Logger(SquidService.name);
-    private isSquidRunning: boolean = false;
     
     constructor(
         private readonly supervisordService: SupervisordService,
     ) {}
     
-    async onApplicationBootstrap() {
+    async getSquidIsRunning(): Promise<boolean> {
         const squidProcessInfo = await this.supervisordService.getProcessInfo(SQUID_PROCESS_NAME);
-        this.isSquidRunning = squidProcessInfo.state === 20;
+        return squidProcessInfo.state === 20;
     }
     
     async startSquid(data: TStartSquidRequest): Promise<ICommandResponse<StartSquidResponseModel>> {
         try {
-            if (this.isSquidRunning) {
+            if (await this.getSquidIsRunning()) {
                 return {
                     success: false,
                     code: ERRORS.SQUID_ALREADY_RUNNING.code,
@@ -44,8 +43,6 @@ export class SquidService implements OnApplicationBootstrap{
             }
             
             await this.supervisordService.startProcess(SQUID_PROCESS_NAME);
-            
-            this.isSquidRunning = true;
             
             return {
                 success: true,
@@ -67,7 +64,7 @@ export class SquidService implements OnApplicationBootstrap{
     
     async stopSquid(data: TStopSquidRequest): Promise<ICommandResponse<StopSquidResponseModel>> {
         try {
-            if (!this.isSquidRunning) {
+            if (!await this.getSquidIsRunning()) {
                 return {
                     success: false,
                     code: ERRORS.SQUID_IS_NOT_RUNNING.code,
@@ -76,8 +73,6 @@ export class SquidService implements OnApplicationBootstrap{
             }
             
             await this.supervisordService.stopProcess(SQUID_PROCESS_NAME);
-            
-            this.isSquidRunning = false;
             
             return {
                 success: true,
@@ -99,7 +94,7 @@ export class SquidService implements OnApplicationBootstrap{
     
     async restartSquid(data: TRestartSquidRequest): Promise<ICommandResponse<RestartSquidResponseModel>> {
         try {
-            if (!this.isSquidRunning) {
+            if (!await this.getSquidIsRunning()) {
                 return {
                     success: false,
                     code: ERRORS.SQUID_IS_NOT_RUNNING.code,
@@ -110,8 +105,6 @@ export class SquidService implements OnApplicationBootstrap{
             await this.stopSquid(data);
             
             await this.startSquid(data);
-            
-            this.isSquidRunning = true;
             
             return {
                 success: true,
@@ -164,7 +157,7 @@ export class SquidService implements OnApplicationBootstrap{
                 },
             );
             
-            if (this.isSquidRunning) {
+            if (await this.getSquidIsRunning()) {
                 await this.stopSquid(data);
                 await this.startSquid(data);
             }
