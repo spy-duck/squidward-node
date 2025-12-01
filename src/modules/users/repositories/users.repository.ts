@@ -15,22 +15,43 @@ export class UsersRepository {
     ) {}
     
     async create(user: UserEntity): Promise<UserEntity> {
+        const usernameKay = `${ REDIS_KEYS.USERNAME }:${ user.username }`;
+        const uuidKay = `${ REDIS_KEYS.UUID }:${ user.uuid }`;
+        
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            usernameKay,
             'password',
             user.password,
         );
         
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            usernameKay,
             'uuid',
             user.uuid,
         );
         
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            uuidKay,
             'username',
             user.username,
+        );
+        
+        await this.redisService.client.hSet(
+            uuidKay,
+            'expireAt',
+            user.expireAt.toISOString(),
+        );
+        
+        await this.redisService.client.hExpireAt(
+            uuidKay,
+            [ 'username', 'expireAt' ],
+            user.expireAt,
+        );
+        
+        await this.redisService.client.hExpireAt(
+            usernameKay,
+            [ 'password', 'uuid' ],
+            user.expireAt,
         );
         
         return user;
@@ -52,7 +73,7 @@ export class UsersRepository {
             } = await this.redisService.client.scan(
                 cursor,
                 {
-                    MATCH: `${key}:*`,
+                    MATCH: `${ key }:*`,
                     COUNT: 100,
                 },
             );
@@ -64,23 +85,23 @@ export class UsersRepository {
             await this.redisService.client.del(keysToDelete);
         }
     }
-   
+    
     async remove(userUuid: string): Promise<void> {
         const user = await this.getByUuid(userUuid);
         if (!user) {
             return;
         }
         await this.redisService.client.del(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            `${ REDIS_KEYS.USERNAME }:${ user.username }`,
         );
         await this.redisService.client.del(
-            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            `${ REDIS_KEYS.UUID }:${ user.uuid }`,
         );
     }
     
     async getByUsername(username: string): Promise<UserEntity | null> {
         const exist = await this.redisService.client.exists(
-            `${REDIS_KEYS.USERNAME}:${ username }`,
+            `${ REDIS_KEYS.USERNAME }:${ username }`,
         );
         
         if (!exist) {
@@ -88,19 +109,20 @@ export class UsersRepository {
         }
         
         const user = await this.redisService.client.hGetAll(
-            `${REDIS_KEYS.USERNAME}:${ username }`,
+            `${ REDIS_KEYS.USERNAME }:${ username }`,
         );
         
-        return new UserEntity(
-            user.uuid,
-            username,
-            user.password,
-        );
+        return new UserEntity({
+            uuid: user.uuid,
+            username: username,
+            password: user.password,
+            expireAt: new Date(user.expireAt),
+        });
     }
     
     async getByUuid(userUuid: string): Promise<UserEntity | null> {
         const userByUuid = await this.redisService.client.hGetAll(
-            `${REDIS_KEYS.UUID}:${userUuid}`,
+            `${ REDIS_KEYS.UUID }:${ userUuid }`,
         )
         
         if (!userByUuid) {
@@ -108,7 +130,7 @@ export class UsersRepository {
         }
         
         const exist = await this.redisService.client.exists(
-            `${REDIS_KEYS.USERNAME}:${ userByUuid.username }`,
+            `${ REDIS_KEYS.USERNAME }:${ userByUuid.username }`,
         );
         
         if (!exist) {
@@ -116,18 +138,18 @@ export class UsersRepository {
         }
         
         const user = await this.redisService.client.hGetAll(
-            `${REDIS_KEYS.USERNAME}:${ userByUuid.username }`,
+            `${ REDIS_KEYS.USERNAME }:${ userByUuid.username }`,
         );
         
-        return new UserEntity(
-            user.uuid,
-            userByUuid.username,
-            user.password,
-        );
+        return new UserEntity({
+            uuid: user.uuid,
+            username: userByUuid.username,
+            password: user.password,
+            expireAt: new Date(user.expireAt),
+        });
     }
     
     async update(user: UserEntity): Promise<UserEntity | null> {
-        
         const currentUser = await this.getByUuid(user.uuid);
         
         if (!currentUser) {
@@ -135,29 +157,44 @@ export class UsersRepository {
         }
         
         await this.redisService.client.del(
-            `${REDIS_KEYS.USERNAME}:${currentUser.username}`,
+            `${ REDIS_KEYS.USERNAME }:${ currentUser.username }`,
         );
-
+        
+        const usernameKay = `${ REDIS_KEYS.USERNAME }:${ user.username }`;
+        const uuidKay = `${ REDIS_KEYS.UUID }:${ user.uuid }`;
+        
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            usernameKay,
             'password',
             user.password,
         );
         
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.USERNAME}:${user.username}`,
+            usernameKay,
             'uuid',
             user.uuid,
         );
         
         await this.redisService.client.del(
-            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            uuidKay,
         );
         
         await this.redisService.client.hSet(
-            `${REDIS_KEYS.UUID}:${user.uuid}`,
+            uuidKay,
             'username',
             user.username,
+        );
+        
+        await this.redisService.client.hExpireAt(
+            uuidKay,
+            [ 'username', 'expireAt' ],
+            user.expireAt,
+        );
+        
+        await this.redisService.client.hExpireAt(
+            usernameKay,
+            [ 'password', 'uuid' ],
+            user.expireAt,
         );
         
         return user;

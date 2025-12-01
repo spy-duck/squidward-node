@@ -1,5 +1,3 @@
-export interface TUpdateUserRequest {
-    uuid: string;
-    username: string;
-    password: string;
-}
+import { User } from '@contract/shcemas';
+
+export type TUpdateUserRequest = User;

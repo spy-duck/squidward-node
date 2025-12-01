@@ -1,19 +1,12 @@
 import { z } from 'zod';
 import { REST_API } from '../../api';
+import { UserScheme } from '../../shcemas';
 
 export namespace PostUsersContract {
     export const url = REST_API.USERS.POST;
     
-    const User = z.object({
-        uuid: z.uuid(),
-        username: z.string(),
-        password: z.string(),
-    });
-    
     export const RequestSchema = z.object({
-        data: z.array(
-            User,
-        ),
+        data: z.array(UserScheme),
     });
     
     export type Request = z.infer<typeof RequestSchema>;

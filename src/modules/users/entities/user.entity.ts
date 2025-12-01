@@ -1,7 +1,11 @@
 export class UserEntity {
-    constructor(
-        public uuid: string,
-        public username: string,
-        public password: string,
-    ) {}
+    public readonly uuid: string;
+    public readonly username: string;
+    public readonly password: string;
+    public readonly expireAt: Date;
+    
+    constructor(entity: UserEntity) {
+        Object.assign(this, entity);
+        return this;
+    }
 }

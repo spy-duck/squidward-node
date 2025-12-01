@@ -1,7 +1,5 @@
+import { User } from '@contract/shcemas';
+
 export interface TPostUsersRequest {
-    data: {
-        uuid: string;
-        username: string;
-        password: string;
-    }[];
+    data: User[];
 }

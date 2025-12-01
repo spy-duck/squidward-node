@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { PostUsersContract } from '../../../../libs/contracts';
+import { PostUsersContract } from '@contract/commands';
 
 
 export class PostUsersRequestDto extends createZodDto(PostUsersContract.RequestSchema) {}

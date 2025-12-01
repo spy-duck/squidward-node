@@ -24,18 +24,19 @@ export class UsersService {
         private readonly usersRepository: UsersRepository,
     ) {}
     
-    async postUsers(data: TPostUsersRequest): Promise<ICommandResponse<PostUsersResponseModel>> {
+    async postUsers(request: TPostUsersRequest): Promise<ICommandResponse<PostUsersResponseModel>> {
         try {
             // Clear users
             await this.usersRepository.clear();
             
             // Save users
-            for (const user of data.data) {
-                await this.usersRepository.create(new UserEntity(
-                    user.uuid,
-                    user.username,
-                    user.password,
-                ));
+            for (const user of request.data) {
+                await this.usersRepository.create(new UserEntity({
+                    uuid: user.uuid,
+                    username: user.username,
+                    password: user.password,
+                    expireAt: user.expireAt,
+                }));
             }
             
             return {
@@ -56,13 +57,14 @@ export class UsersService {
         }
     }
     
-    async addUser(data: TAddUserRequest): Promise<ICommandResponse<AddUserResponseModel>> {
+    async addUser(request: TAddUserRequest): Promise<ICommandResponse<AddUserResponseModel>> {
         try {
-            await this.usersRepository.create(new UserEntity(
-                data.uuid,
-                data.username,
-                data.password,
-            ));
+            await this.usersRepository.create(new UserEntity({
+                uuid: request.uuid,
+                username: request.username,
+                password: request.password,
+                expireAt: request.expireAt,
+            }));
             return {
                 success: true,
                 response: new AddUserResponseModel(true),
@@ -102,13 +104,14 @@ export class UsersService {
         }
     }
     
-    async updateUser(data: TUpdateUserRequest): Promise<ICommandResponse<UpdateUserResponseModel>> {
+    async updateUser(request: TUpdateUserRequest): Promise<ICommandResponse<UpdateUserResponseModel>> {
         try {
-            await this.usersRepository.update(new UserEntity(
-                data.uuid,
-                data.username,
-                data.password,
-            ));
+            await this.usersRepository.update(new UserEntity({
+                uuid: request.uuid,
+                username: request.username,
+                password: request.password,
+                expireAt: request.expireAt,
+            }));
             return {
                 success: true,
                 response: new UpdateUserResponseModel(true),
