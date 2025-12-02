@@ -3,7 +3,7 @@ import { ICommandResponse } from '@/common/types';
 import { ERRORS, SQUID_PROCESS_NAME } from '@contract/constants';
 import { NodeHealthResponseModel } from '@/modules/node/models';
 import { SupervisordService } from '@/common/libs/supervisord/supervisord.service';
-import packageJson from '../../../package.json';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class NodeService {
@@ -11,6 +11,7 @@ export class NodeService {
     
     constructor(
         private readonly supervisordService: SupervisordService,
+        private readonly config: ConfigService,
     ) {}
     
     async health(): Promise<ICommandResponse<NodeHealthResponseModel>> {
@@ -22,7 +23,7 @@ export class NodeService {
                     true,
                     null,
                     squidProcessInfo.statename,
-                    packageJson.version,
+                    this.config.get('VERSION', 'N/A'),
                 ),
             };
         } catch (error) {

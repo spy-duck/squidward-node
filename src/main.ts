@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import morgan from 'morgan';
 import express, { json } from 'express';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
 import compression from 'compression';
 import { ZodValidationPipe } from 'nestjs-zod';
 import winston, { createLogger } from 'winston';
@@ -71,7 +72,8 @@ async function bootstrap() {
         .then(() => {
             logger.info(`
 ====================================================
-= Application is running on: http://localhost:${ config.getOrThrow<string>('APP_PORT') } =
+= Application is running on: http://localhost:${ config.getOrThrow<string>('APP_PORT') }
+= Version: ${config.get('VERSION', 'N/A')}
 ====================================================
             `);
         });

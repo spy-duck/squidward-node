@@ -47,6 +47,8 @@ jobs:
           tags: |
             squidwardproxy/squidward-node:latest
             squidwardproxy/squidward-node:${{ github.ref_name }}
+          build-args: |
+            BUILD_VERSION=${{ github.ref_name }}
 
       - name: Create node contracts package
         run: |
