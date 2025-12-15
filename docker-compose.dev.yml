@@ -1,6 +1,6 @@
 services:
   squidward-node:
-    image: squidwardproxy/squidward-node:0.0.1
+    image: squidwardproxy/squidward-node:dev
     restart: unless-stopped
     depends_on:
       - squidward-node-valkey
@@ -13,6 +13,7 @@ services:
       nofile: 1048576
     volumes:
       - ./:/app
+      - ./vector.yaml:/etc/vector/vector.yaml
       - ./.data/.acme.sh:/root/.acme.sh
       - ./.data/certs/:/etc/squid/certs
       - ./.data/squid/logs:/var/log/squid

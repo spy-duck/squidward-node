@@ -1,8 +1,5 @@
 docker_build:
-	docker build --progress=plain -t squidwardproxy/squidward-node .
+	docker build --progress=plain -t squidwardproxy/squidward-node:dev .
 
-deploy:
-	tsx ./shell/deploy.js
-
-dev_build:
-	tsx ./shell/deploy.js --yes --no-push
+dev_rebuild: docker_build
+	docker compose down && docker compose -f docker-compose.dev.yml up -d

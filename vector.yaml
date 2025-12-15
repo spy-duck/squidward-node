@@ -1,0 +1,71 @@
+sources:
+  squid_logs:
+    type: "file"
+    include:
+      - "/var/log/squid/vector_access.log"
+    ignore_older_secs: 86400
+    fingerprint:
+      strategy: "checksum"
+
+transforms:
+  parse_squid_logs:
+    type: "remap"
+    inputs:
+      - squid_logs
+    source: |
+      . = parse_regex!(.message, r'^(?P<timestamp>[^ ]+)\s+(?P<user>[^ ]+)\s+(?P<client_ip>[^ ]+)\s+(?P<upload>[^ ]+)/(?P<download>[^ ]+)\s+(?P<method>[^ ]+)/(?P<http_status>[^ ]+)\s+(?P<url>[^ ]+)\s+(?P<request_scheme>[^ ]+)\s+(?P<content_type>[^ ]+)\s+(?P<request_status>[^ ]+)/(?P<hierarchy_status>[^ ]+)$')
+      
+      .timestamp = parse_timestamp!(.timestamp, format: "%s")
+      
+      if .user == "-" {
+        .user = "anonymous"
+      }
+      
+      .upload = to_int!(.upload)
+      .download = to_int!(.download)
+      
+      .http_status = to_int!(.http_status)
+      
+      del(.message)
+
+  aggregate_user_metric:
+    type: "log_to_metric"
+    inputs:
+      - parse_squid_logs
+    metrics:
+      - type: "counter"
+        field: "upload"
+        namespace: "user.{{ .user }}"
+        name: "upload"
+        increment_by_value: true
+        tags:
+          user: "{{ .user }}"
+      - type: "counter"
+        field: "download"
+        namespace: "user.{{ .user }}"
+        name: "download"
+        increment_by_value: true
+        tags:
+          user: "{{ .user }}"
+
+  user_metric:
+    type: "aggregate"
+    inputs:
+      - aggregate_user_metric
+    interval_ms: 10000
+    mode: "Sum"
+
+
+sinks:
+#  out:
+#    inputs:
+#      - "parse_squid_logs"
+#    type: "console"
+#    encoding:
+#      codec: "json"
+  aggregation:
+    inputs:
+      - "user_metric"
+    type: "console"
+    encoding:
+      codec: "json"
