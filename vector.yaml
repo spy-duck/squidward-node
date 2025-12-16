@@ -4,8 +4,8 @@ sources:
     include:
       - "/var/log/squid/vector_access.log"
     ignore_older_secs: 86400
-    fingerprint:
-      strategy: "checksum"
+#    fingerprint:
+#      strategy: "checksum"
 
 transforms:
   parse_squid_logs:
@@ -35,7 +35,7 @@ transforms:
     metrics:
       - type: "counter"
         field: "upload"
-        namespace: "user.{{ .user }}"
+        namespace: "user_stats"
         name: "upload"
         increment_by_value: true
         tags:
@@ -52,20 +52,29 @@ transforms:
     type: "aggregate"
     inputs:
       - aggregate_user_metric
-    interval_ms: 10000
+    interval_ms: 5000
     mode: "Sum"
 
 
 sinks:
-#  out:
-#    inputs:
-#      - "parse_squid_logs"
-#    type: "console"
-#    encoding:
-#      codec: "json"
+  out:
+    inputs:
+      - "parse_squid_logs"
+    type: "console"
+    encoding:
+      codec: "json"
   aggregation:
     inputs:
       - "user_metric"
     type: "console"
+    encoding:
+      codec: "json"
+  redis:
+    type: redis
+    inputs:
+      - user_metric
+    endpoint: redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/0
+    healthcheck: true
+    key: "user_metric"
     encoding:
       codec: "json"

@@ -4,6 +4,8 @@ import fs from 'node:fs';
 const INTERNAL_SERVER_PORT = 9053;
 const INTERNAL_SERVER_URL = `http://localhost:${ INTERNAL_SERVER_PORT }/auth/authentication`;
 
+type OKType = `OK${ string }`;
+
 export async function initSquidAuthHandler() {
     try {
         const rl = readline.createInterface({
@@ -12,7 +14,7 @@ export async function initSquidAuthHandler() {
             terminal: false,
         });
         
-        async function main(username, password): Promise<'OK' | 'ERR'> {
+        async function main(username, password): Promise<OKType | 'ERR'> {
             try {
                 const response = await fetch(INTERNAL_SERVER_URL, {
                     method: 'POST',
@@ -37,26 +39,27 @@ export async function initSquidAuthHandler() {
                 const data: {
                     response?: {
                         success?: boolean;
+                        userUuid?: string | null;
                     }
                 } = await response.json();
                 
-                return data?.response?.success ? `OK` : `ERR`;
+                return data?.response?.success ? `OK uuid=${ data.response.userUuid }` : `ERR`;
             } catch (err) {
                 fs.writeFileSync('/tmp/squid-auth-handler.error.log', `[${ new Date().toISOString() }] ${ JSON.stringify(err) } \n`);
                 return `ERR`;
             }
         }
- 
+        
         rl.on('line', (line) => {
             const [ username, password ] = line.split(' ');
             main(username, password)
                 .then((result) => {
-                    console.log(result);
+                    process.stdout.write(result + "\r\n");
                     process.exit(0);
                 })
                 .catch((err) => {
                     fs.writeFileSync('/tmp/squid-auth-handler.error.log', `[${ new Date().toISOString() }] ${ JSON.stringify(err) } \n`);
-                    console.log(`ERR`);
+                    process.stdout.write(`ERR\r\n`);
                 });
         });
         
@@ -65,7 +68,7 @@ export async function initSquidAuthHandler() {
         );
     } catch (err) {
         fs.writeFileSync('/tmp/squid-auth-handler.error.log', `[${ new Date().toISOString() }] ${ JSON.stringify(err) } \n`);
-        console.log(`ERR`);
+        process.stdout.write(`ERR\r\n`);
         // TODO: log and report error
     }
 }
