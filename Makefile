@@ -1,8 +1,10 @@
 docker_build:
-	docker build --progress=plain -t squidwardproxy/squidward-node .
+	docker build --progress=plain -t squidwardproxy/squidward-node:dev .
 
-deploy:
-	tsx ./shell/deploy.js
+dev_rebuild:
+	npm run build:squid-auth-handler
+	make docker_build
+	docker compose down && docker compose -f docker-compose.dev.yml up -d
 
-dev_build:
-	tsx ./shell/deploy.js --yes --no-push
+vector_logs:
+	docker compose -f docker-compose.dev.yml exec squidward-node bash -c "tail -f /var/log/squid/vector_access.log"

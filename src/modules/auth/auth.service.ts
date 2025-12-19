@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ICommandResponse } from '@/common/types';
 import { ERRORS } from '@contract/constants';
-import { comparePassword, encryptPassword } from '@/common/helpers';
+import { comparePassword } from '@/common/helpers';
 import { UsersRepository } from '@/modules/users/repositories/users.repository';
 import { AuthenticationResponseModel } from './models';
 import { TAuthenticationRequest } from './interfaces';
@@ -27,10 +27,10 @@ export class AuthService {
             }
             
             if (await comparePassword(data.password, user.password)) {
-                this.logger.log(`User "${user.username}" has been authenticated`);
+                this.logger.log(`User "${user.uuid}" has been authenticated`);
                 return {
                     success: true,
-                    response: new AuthenticationResponseModel(true),
+                    response: new AuthenticationResponseModel(true, null, user.uuid),
                 };
             }
             

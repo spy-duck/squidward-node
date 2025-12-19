@@ -1,0 +1,81 @@
+log_schema:
+  level: "warn"
+
+sources:
+  squid_logs:
+    type: "file"
+    include:
+      - "/var/log/squid/access.log"
+
+transforms:
+  parsed_log:
+    type: "remap"
+    inputs:
+      - squid_logs
+    source: |
+      parsed, err = parse_regex(.message, r'^(?P<timestamp>[^ ]+)\s+(?P<user>[^ ]+)\s+(?P<client_ip>[^ ]+)\s+(?P<upload>[^ ]+)/(?P<download>[^ ]+)\s+(?P<method>[^ ]+)/(?P<http_status>[^ ]+)\s+(?P<url>[^ ]+)\s+(?P<request_scheme>[^ ]+)\s+(?P<content_type>[^ ]+)\s+(?P<request_status>[^ ]+)/(?P<hierarchy_status>[^ ]+)$')
+      
+      if err == null {
+          .user = parsed.user
+          .upload = to_int(parsed.upload) ?? 0
+          .download = to_int(parsed.download) ?? 0
+      
+          del(.message)
+          del(.timestamp)
+          del(.file)
+          del(.host)
+          del(.client_ip)
+          del(.method)
+          del(.http_status)
+          del(.request_scheme)
+          del(.content_type)
+          del(.request_status)
+          del(.hierarchy_status)
+      } else {
+          abort
+      }
+
+  filtered_log:
+      type: "filter"
+      inputs:
+        - parsed_log
+      condition: ".user != \"-\""
+
+  aggregate_by_user:
+    type: "reduce"
+    inputs:
+      - filtered_log
+    group_by:
+      - "user"
+    merge_strategies:
+      upload: "sum"
+      download: "sum"
+    flush_period_ms: ${VECTOR_LOG_FRAME:-5000}
+
+  users_remap:
+    type: "remap"
+    inputs:
+      - aggregate_by_user
+    source: |
+      . = {
+        "ts": to_unix_timestamp(now()),
+        "usr": .user,
+        "up": to_string!(.upload),
+        "down":  to_string!(.download)
+      }
+
+sinks:
+  redis:
+    type: "redis"
+    inputs:
+      - users_remap
+    endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
+    key: "metrics:users"
+    data_type: "list"
+    healthcheck:
+      enabled: true
+    encoding:
+      codec: "json"
+    buffer:
+        type: "disk"
+        max_size: 512000000 # 512MB

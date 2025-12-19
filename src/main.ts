@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import morgan from 'morgan';
 import express, { json } from 'express';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import compression from 'compression';
 import { ZodValidationPipe } from 'nestjs-zod';
 import winston, { createLogger } from 'winston';
@@ -13,6 +12,7 @@ import { isDevelopment } from '@/common/utils/is-development';
 import { INTERNAL_SERVER_PORT } from '@contract/constants';
 import { InternalServerMiddleware } from '@/common/middleware/internal-server.middleware';
 import { parseNodePayload } from '@/common/utils/decode-node-payload';
+import './common/utils/bigint-serialize';
 
 const logger = createLogger({
     transports: [ new winston.transports.Console() ],

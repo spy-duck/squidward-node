@@ -1,0 +1,25 @@
+log_schema:
+  level: "info"
+
+sinks:
+  debug:
+    type: "console"
+    inputs:
+      - users_remap
+    encoding:
+      codec: "json"
+
+  redis:
+    type: "redis"
+    inputs:
+      - users_remap
+    endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
+    key: "metrics:users"
+    data_type: "list"
+    healthcheck:
+      enabled: true
+    encoding:
+      codec: "json"
+    buffer:
+      type: "disk"
+      max_size: 512000000 # 512MB

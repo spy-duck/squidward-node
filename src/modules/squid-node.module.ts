@@ -5,6 +5,8 @@ import { RedisService } from '@/common/libs/redis/redis.service';
 import { SquidModule } from '@/modules/squid/squid.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { NodeModule } from '@/modules/node/node.module';
+import { MetricsModule } from '@/modules/metrics/metrics.module';
+
 
 @Module({
     imports: [
@@ -12,6 +14,7 @@ import { NodeModule } from '@/modules/node/node.module';
         UsersModule,
         SquidModule,
         NodeModule,
+        MetricsModule,
     ],
     providers: [],
 })

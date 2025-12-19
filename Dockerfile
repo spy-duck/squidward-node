@@ -24,24 +24,23 @@ RUN chmod +x cert-renew-hook.sh
 RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY ./supervisord.conf .
+# Istall Vector
+RUN curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y --prefix /usr/local
+COPY ./vector.yaml /etc/vector/
+COPY ./vector.debug.yaml /etc/vector/
+COPY ./shell/start-vector.sh /usr/local/bin/start-vector.sh
+RUN chmod +x /usr/local/bin/start-vector.sh
+RUN mkdir -p /var/lib/vector
 
+# Copy node files
+COPY ./supervisord.conf .
 COPY shell/start-squid.sh /etc/squid/start-squid.sh
 RUN chmod +x /etc/squid/start-squid.sh
-
 COPY ./shell/squid-auth-connector.js /app/bin/squid-auth-connector.js
-
 COPY shell/docker-entrypoint.sh /usr/local/bin/entrypoint.sh
-
 COPY package*.json ./
 COPY ./node_modules ./node_modules
 COPY ./dist/src/main.js .
 COPY ./dist/libs/squid-auth-handler/index.js /app/bin/squid-auth-handler.js
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-CMD tail -f /dev/null
-
-
-
-

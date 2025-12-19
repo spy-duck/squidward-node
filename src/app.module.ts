@@ -32,7 +32,7 @@ import { JwtStrategy } from '@/common/guards/jwt/jwt-token.strategy';
                     : 6379;
                 
                 return ({
-                    database: 10,
+                    database: +config.getOrThrow('REDIS_DB'),
                     host: 'localhost',
                     port,
                     password: config.getOrThrow('REDIS_PASSWORD'),
