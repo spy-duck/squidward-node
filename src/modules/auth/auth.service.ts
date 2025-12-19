@@ -27,8 +27,7 @@ export class AuthService {
             }
             
             if (await comparePassword(data.password, user.password)) {
-                this.logger.log(`User "${user.username}" has been authenticated`);
-                console.log(user);
+                this.logger.log(`User "${user.uuid}" has been authenticated`);
                 return {
                     success: true,
                     response: new AuthenticationResponseModel(true, null, user.uuid),

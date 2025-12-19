@@ -4,7 +4,6 @@ import { ROOT } from '@contract/api';
 
 export function validateInternalRequest(req: Request): boolean {
     const headers = req.headers;
-    console.log('headers', headers, headers['user-agent']);
     if (headers['user-agent'] === INTERNAL_USER_AGENT) {
         return true;
     }

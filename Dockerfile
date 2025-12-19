@@ -27,6 +27,9 @@ RUN rm -rf /var/lib/apt/lists/*
 # Istall Vector
 RUN curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y --prefix /usr/local
 COPY ./vector.yaml /etc/vector/
+COPY ./vector.debug.yaml /etc/vector/
+COPY ./shell/start-vector.sh /usr/local/bin/start-vector.sh
+RUN chmod +x /usr/local/bin/start-vector.sh
 RUN mkdir -p /var/lib/vector
 
 # Copy node files
