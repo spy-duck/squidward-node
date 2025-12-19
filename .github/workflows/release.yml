@@ -1,0 +1,55 @@
+name: Build contracts
+
+on:
+  push:
+        branches: [ "main" ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: NewTag
+        id: tag
+        uses: JinoArch/get-latest-tag@latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+          npm run build:squid-auth-handler
+      - name: Create node contracts package
+        run: |
+          cd libs/contracts/
+          npm pack
+          mv squidward-node-contracts-*.tgz  ../../squidward-node-contracts.tgz
+
+      - name: Upload Contracts Asset
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          files: squidward-node-contracts.tgz
+          tag_name: contracts
+          generate_release_notes: true
+          append_body: false
+          make_latest: false
+          draft: false
+          prerelease: false
+          name: ${{ github.ref_name }}
+          body: |
+            # Node contracts
+            
+            ${{ env.CHANGELOG }}
+
+            ### 📦 Artifacts
+            - [squidward-node-contracts.tgz](https://github.com/spy-duck/squidward-node/releases/download/${{ github.ref_name }}/squidward-node-contracts.tgz)  - node contracts package for backend integration

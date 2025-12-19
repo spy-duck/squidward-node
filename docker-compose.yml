@@ -20,6 +20,8 @@ services:
     ulimits:
       nproc: 1073741816
       nofile: 1048576
+    environment:
+      REDIS_DB: 0
 
   squidward-node-valkey:
     image: valkey/valkey:9.0-alpine3.22
