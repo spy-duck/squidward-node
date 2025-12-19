@@ -107,8 +107,7 @@ upgrade() {
     do_upgrade_shell "$@"
 
     log_info "Get docker-compose.yml"
-    git archive --remote="ssh://$GIT_REPO" HEAD docker-compose.yml | tar -xO docker-compose.yml > docker-compose.yml
-
+    wget "$GIT_REPO/docker-compose.yml" -O ./docker-compose.yml
 
     log_info "Pull docker updates"
     docker compose pull
@@ -179,7 +178,7 @@ fi
 
 case "$ACTION" in
     install) install ;;
-    upgrade) upgrade ;;
+    upgrade) upgrade "$@";;
     uninstall)  uninstall ;;
     *)
         log_error "Unknown action: $ACTION"
