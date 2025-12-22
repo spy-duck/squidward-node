@@ -50,7 +50,7 @@ transforms:
     merge_strategies:
       upload: "sum"
       download: "sum"
-    flush_period_ms: ${VECTOR_LOG_FRAME:-5000}
+    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
 
   users_remap:
     type: "remap"
