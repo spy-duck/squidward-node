@@ -3,7 +3,7 @@ import { Controller, Post, UseGuards } from '@nestjs/common';
 import { errorHandler } from '@/common/helpers/error-handler.helper';
 import { JwtGuard } from '@/common/guards/jwt';
 import { MetricsService } from './metrics.service';
-import { UsersMetricsDto } from './dto';
+import { NodeMetricsDto, UsersMetricsDto } from './dto';
 
 
 @UseGuards(JwtGuard)
@@ -14,6 +14,15 @@ export class MetricsController {
     @Post(METRICS_ROUTES.USERS)
     public async usersMetrics(): Promise<UsersMetricsDto> {
         const response = await this.metricsService.usersMetrics();
+        const data = errorHandler(response);
+        return {
+            response: data.metrics,
+        };
+    }
+    
+    @Post(METRICS_ROUTES.NODE)
+    public async nodeMetrics(): Promise<NodeMetricsDto> {
+        const response = await this.metricsService.nodeMetrics();
         const data = errorHandler(response);
         return {
             response: data.metrics,

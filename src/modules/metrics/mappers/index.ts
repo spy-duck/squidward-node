@@ -1,1 +1,1 @@
-export * from './user-metrics.mapper';
+export * from './metrics.mapper';

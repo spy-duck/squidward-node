@@ -2,9 +2,16 @@ log_schema:
   level: "info"
 
 sinks:
-  debug:
+  debug_users_sink:
     type: "console"
     inputs:
       - users_remap
+    encoding:
+      codec: "json"
+
+  debug_node_sink:
+    type: "console"
+    inputs:
+      - node_remap
     encoding:
       codec: "json"

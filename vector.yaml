@@ -52,6 +52,15 @@ transforms:
       download: "sum"
     flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
 
+  aggregate_by_node:
+    type: "reduce"
+    inputs:
+      - parsed_log
+    merge_strategies:
+      upload: "sum"
+      download: "sum"
+    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
+
   users_remap:
     type: "remap"
     inputs:
@@ -64,13 +73,39 @@ transforms:
         "down":  to_string!(.download)
       }
 
+  node_remap:
+    type: "remap"
+    inputs:
+      - aggregate_by_node
+    source: |
+      . = {
+        "ts": to_unix_timestamp(now()),
+        "up": to_string!(.upload),
+        "down":  to_string!(.download)
+      }
+
 sinks:
-  redis:
+  redis_users_sink:
     type: "redis"
     inputs:
       - users_remap
     endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
     key: "metrics:users"
+    data_type: "list"
+    healthcheck:
+      enabled: true
+    encoding:
+      codec: "json"
+    buffer:
+        type: "disk"
+        max_size: 512000000 # 512MB
+
+  redis_node_sink:
+    type: "redis"
+    inputs:
+      - node_remap
+    endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
+    key: "metrics:node"
     data_type: "list"
     healthcheck:
       enabled: true
