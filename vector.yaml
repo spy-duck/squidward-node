@@ -8,6 +8,7 @@ sources:
       - "/var/log/squid/access.log"
 
 transforms:
+  # Parse logs
   parsed_log:
     type: "remap"
     inputs:
@@ -35,6 +36,7 @@ transforms:
           abort
       }
 
+  # Users stats
   filtered_log:
       type: "filter"
       inputs:
@@ -52,15 +54,6 @@ transforms:
       download: "sum"
     flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
 
-  aggregate_by_node:
-    type: "reduce"
-    inputs:
-      - parsed_log
-    merge_strategies:
-      upload: "sum"
-      download: "sum"
-    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
-
   users_remap:
     type: "remap"
     inputs:
@@ -73,6 +66,17 @@ transforms:
         "down":  to_string!(.download)
       }
 
+  # Node stats
+  aggregate_by_node:
+    type: "reduce"
+    inputs:
+      - parsed_log
+    group_by: []
+    merge_strategies:
+      upload: "sum"
+      download: "sum"
+    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-30000}
+
   node_remap:
     type: "remap"
     inputs:
@@ -82,6 +86,42 @@ transforms:
         "ts": to_unix_timestamp(now()),
         "up": to_string!(.upload),
         "down":  to_string!(.download)
+      }
+
+  # Online users stats
+  aggregate_online:
+    type: "reduce"
+    inputs:
+      - filtered_log
+    group_by:
+      - "user"
+    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-5000}
+
+  prep_online_count:
+    type: "remap"
+    inputs:
+      - aggregate_online
+    source: |
+      .online = 1
+
+  aggregate_by_user_online:
+    type: "reduce"
+    inputs:
+      - prep_online_count
+    group_by:
+      - "user"
+    merge_strategies:
+      online: "sum"
+    flush_period_ms: ${VECTOR_LOGS_FLUSH_MS:-5000}
+
+  node_online_remap:
+    type: "remap"
+    inputs:
+      - aggregate_by_user_online
+    source: |
+      . = {
+        "ts": to_unix_timestamp(now()),
+        "online": .online,
       }
 
 sinks:
@@ -106,6 +146,21 @@ sinks:
       - node_remap
     endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
     key: "metrics:node"
+    data_type: "list"
+    healthcheck:
+      enabled: true
+    encoding:
+      codec: "json"
+    buffer:
+        type: "disk"
+        max_size: 512000000 # 512MB
+
+  redis_node_online_users_sink:
+    type: "redis"
+    inputs:
+      - node_online_remap
+    endpoint: "redis://:${REDIS_PASSWORD?err}@127.0.0.1:${REDIS_PORT:-6379}/${REDIS_DB:-0}"
+    key: "metrics:online"
     data_type: "list"
     healthcheck:
       enabled: true

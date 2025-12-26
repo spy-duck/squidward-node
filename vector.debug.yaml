@@ -15,3 +15,10 @@ sinks:
       - node_remap
     encoding:
       codec: "json"
+
+  debug_node_online_sink:
+    type: "console"
+    inputs:
+      - node_online_remap
+    encoding:
+      codec: "json"

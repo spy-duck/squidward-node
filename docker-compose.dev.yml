@@ -13,7 +13,6 @@ services:
       nofile: 1048576
     volumes:
       - ./:/app
-      - ./vector.yaml:/etc/vector/vector.yaml
       - ./.data/.acme.sh:/root/.acme.sh
       - ./.data/certs/:/etc/squid/certs
       - ./.data/squid/logs:/var/log/squid
@@ -21,6 +20,8 @@ services:
       - ./shell/docker-entrypoint.dev.sh:/usr/local/bin/entrypoint.sh
       - ./shell/squid-auth-connector.js:/app/bin/squid-auth-connector.js
       - ./dist/libs/squid-auth-handler/index.js:/app/bin/squid-auth-handler.js
+      - ./vector.yaml:/etc/vector/vector.yaml
+      - ./vector.dev.yaml:/etc/vector/vector.dev.yaml
     command:
       - npm start:dev
 

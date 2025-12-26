@@ -16,7 +16,6 @@ export class UsersMetricsRepository {
     ) {}
     
     async getUsersMetrics(): Promise<UserMetric[]> {
-        await this.redisService.client.select(0);
         const rows = await this.redisService.client.lPopCount(
             REDIS_KEYS.USERS_METRICS,
             500,
@@ -25,7 +24,6 @@ export class UsersMetricsRepository {
     }
     
     async getNodeMetrics(): Promise<NodeMetric[]> {
-        await this.redisService.client.select(0);
         const rows = await this.redisService.client.lPopCount(
             REDIS_KEYS.NODE_METRICS,
             500,
