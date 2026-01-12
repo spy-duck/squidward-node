@@ -45,6 +45,7 @@ if [ ! -f /etc/squid/certs/privkey.key ]; then
     --tlsport 8443 \
     --renew-hook "/app/cert-renew-hook.sh" \
     --force \
+    --install-cronjob \
     --debug 2 \
     || log_error "Certificate request failed" && exit 1
 
