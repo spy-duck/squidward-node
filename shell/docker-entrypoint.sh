@@ -35,14 +35,15 @@ if [ ! -f /etc/squid/certs/privkey.key ]; then
 
   log_start "Requesting certificate..."
   /root/.acme.sh/acme.sh \
+    --server letsencrypt \
     --issue \
     --standalone \
     -d "${DOMAIN}" \
     --key-file /etc/squid/certs/privkey.key \
     --fullchain-file /etc/squid/certs/fullchain.pem \
     --alpn \
-    --httpport 8080 \
-    --tlsport 8443 \
+    --httpport 80 \
+    --tlsport 443 \
     --renew-hook "/app/cert-renew-hook.sh" \
     --force \
     --install-cronjob \
